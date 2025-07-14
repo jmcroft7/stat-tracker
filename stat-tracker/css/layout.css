@@ -1,0 +1,57 @@
+.app-container {
+    background-color: var(--container-bg);
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    width: 360px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    border-radius: 8px;
+}
+nav {
+    display: flex;
+    margin-bottom: 20px;
+    background-color: var(--skill-bg);
+    border-radius: 6px;
+}
+.page {
+    width: 100%;
+}
+.hidden {
+    display: none;
+}
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+#character-name-header {
+    font-size: 2em;
+    font-weight: 600;
+}
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding-bottom: 5px;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group.form-group-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.file-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+.edit-page-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* ADDED MARGIN TO THIS CONTAINER */
+#edit-skills-container {
+    margin-top: 15px;
+}

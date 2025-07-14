@@ -1,0 +1,31 @@
+{
+  "characterName": "Adventurer",
+  "totalHoursGoal": 1000,
+  "theme": "light",
+  "skillOrder": [
+    "skill1",
+    "skill2",
+    "skill3"
+  ],
+  "skills": {
+    "skill1": {
+      "displayName": "Project",
+      "icon": "https://img.icons8.com/ios-filled/50/ffffff/checklist.png",
+      "hours": 0,
+      "notes": ""
+    },
+    "skill2": {
+      "displayName": "Learning",
+      "icon": "https://img.icons8.com/ios-filled/50/ffffff/book.png",
+      "hours": 0,
+      "notes": ""
+    },
+    "skill3": {
+      "displayName": "Exercise",
+      "icon": "https://img.icons8.com/ios-filled/50/ffffff/running.png",
+      "hours": 0,
+      "notes": ""
+    }
+  },
+  "hourLogs": []
+}

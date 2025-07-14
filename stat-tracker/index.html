@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <nav>
+            <button id="nav-stats" class="nav-tab-button active">Stats</button>
+            <button id="nav-dashboard" class="nav-tab-button">Graph</button>
+            <button id="nav-recent" class="nav-tab-button">Recent</button>
+            <button id="nav-log-hours" class="nav-tab-button">Log</button>
+            <button id="nav-skills" class="nav-tab-button">Skills</button>
+            <div class="nav-dropdown">
+                <button id="nav-more" class="nav-tab-button">More</button>
+                <div id="more-dropdown" class="dropdown-content hidden">
+                    <a href="#" id="nav-settings">Settings</a>
+                    <a href="#" id="nav-about">About</a>
+                </div>
+            </div>
+        </nav>
+
+        <div id="stats-page" class="page">
+            <div class="header">
+            </div>
+            <div id="stat-grid-main" class="stat-grid"></div>
+        </div>
+
+        <div id="dashboard-page" class="page hidden">
+            <div class="header">
+                <h2>Skill Graph</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="skill-chart"></canvas>
+            </div>
+        </div>
+
+        <div id="log-hours-page" class="page hidden">
+            <div class="header">
+                <h2>Log Progress</h2>
+            </div>
+            <div class="form-group"> <label for="skill-select">For Skill:</label> <select id="skill-select"></select>
+            </div>
+            <div class="form-group"> <label for="hours-input">Hours to Add:</label> <input type="number"
+                    id="hours-input" min="0" placeholder="e.g., 10.5"> </div>
+            <button id="add-hours-btn" class="nav-button">Add</button>
+        </div>
+
+        <div id="recent-page" class="page hidden">
+            <div class="header">
+                <h2>Recent Activity</h2>
+            </div>
+            <div class="form-group">
+                <label for="recent-view-select">View Mode</label>
+                <select id="recent-view-select">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+            </div>
+            <div id="recent-activity-container"></div>
+        </div>
+
+        <div id="skills-page" class="page hidden">
+            <div class="header">
+                <h2>Edit Skills</h2>
+            </div>
+            <div class="form-group form-group-inline">
+                <label class="hard-mode-label">
+                    Hard Mode
+                    <span class="tooltip-trigger" data-tooltip="Sets the max level goal to 10,000 hours instead of 1,000.">?</span>
+                </label>
+                <label class="switch">
+                    <input type="checkbox" id="hard-mode-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <hr style="border-color: var(--skill-border);">
+            <div id="edit-skills-container"></div>
+            <div class="edit-page-actions">
+                <button id="add-skill-btn" class="nav-button">Add New Skill</button>
+                <button id="save-edits-btn" class="nav-button">Save All Changes</button>
+            </div>
+        </div>
+
+        <div id="settings-page" class="page hidden">
+            <div class="header">
+                <h2>Settings</h2>
+            </div>
+            <div class="form-group">
+                <label for="char-name-input">Character Name:</label>
+                <input type="text" id="char-name-input">
+            </div>
+            <div class="form-group form-group-inline">
+                <label>Dark Mode</label>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <hr style="border-color: var(--skill-border);">
+            <div class="file-controls">
+                <button id="save-to-file-btn" class="nav-button">Save to File</button>
+                <button id="load-from-file-btn" class="nav-button">Load from File</button>
+                <input type="file" id="file-loader-input" class="hidden" accept=".json,text/plain">
+            </div>
+        </div>
+
+        <div id="about-page" class="page hidden">
+            <div class="header">
+                <h2>About Skill Tracker</h2>
+            </div>
+            <div class="about-content">
+                <h3>The Application</h3>
+                <p>This Skill Tracker is a tool designed to help you visualize and manage your progress in any skill you
+                    want to improve, whether it's for a hobby, professional development, or personal growth.</p>
+
+                <h3>The Leveling System</h3>
+                <p>Progression is based on a logarithmic curve. By default, reaching level 99 takes 1,000 hours of effort.</p>
+                <p>For those seeking a greater challenge, "Hard Mode" can be enabled on the Skills page. This adjusts the goal to 10,000 hours, requiring a much greater time investment to achieve mastery.</p>
+
+                <h3>The Ranks</h3>
+                <p>Ranks are awarded based on the total hours invested in a skill, marking major milestones in your
+                    journey.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="tooltip" class="hidden"></div>
+
+    <script type="module" src="js/main.js" defer></script>
+</body>
+
+</html>
