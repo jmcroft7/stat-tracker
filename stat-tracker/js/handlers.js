@@ -8,7 +8,6 @@ import {
 import { ICON_LIBRARY, MAX_LEVEL, SKILL_CLASSES } from './config.js';
 
 export function setupEventListeners() {
-    // Set up navigation
     Object.keys(elements.nav).forEach(key => {
         const navElement = elements.nav[key];
         if (navElement) {
@@ -16,16 +15,14 @@ export function setupEventListeners() {
                 // Handle navigation for tabs and dropdown links
                 if (navElement.id !== 'nav-more') {
                     e.preventDefault();
+                    if (key === 'recent') buildRecentActivityPage();
+                    if (key === 'dashboard') buildChart();
                     navigateTo(key);
                 }
             });
         }
     });
     
-    // Special handling for dashboard and recent tabs to build content
-    elements.nav.dashboard.addEventListener('click', buildChart);
-    elements.nav.recent.addEventListener('click', buildRecentActivityPage);
-
     // 'More' button to toggle dropdown
     elements.moreBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -125,30 +122,31 @@ export function setupEventListeners() {
 
         let tooltipText = '';
 
-        // Handle tooltips that are directly set on the element via `data-tooltip-text`
-        if (trigger.dataset.tooltipText) {
+        if (trigger.id === 'total-level-value') {
             tooltipText = trigger.dataset.tooltipText;
-        } 
-        // Handle tooltips that need to be derived based on `data-tooltip-type`
-        else {
+        } else {
             const tooltipType = trigger.dataset.tooltipType;
-            const card = trigger.closest('.stat');
-            if (card) {
-                const skillId = card.dataset.skillId;
-                const skill = characterData.skills[skillId];
-                if (skill) {
-                    switch (tooltipType) {
-                        case 'notes':
-                            tooltipText = skill.notes || 'No notes for this skill.';
-                            break;
-                        case 'hours':
-                            tooltipText = `${Math.round(skill.hours)} hours`;
-                            break;
-                        case 'progress':
-                            const level = getLevelFromHours(skill.hours, characterData.totalHoursGoal);
-                            const cache = characterData.totalHoursGoal === 1000 ? hoursCache1k : hoursCache10k;
-                            tooltipText = level >= MAX_LEVEL ? "Max Level!" : `${(cache[level + 1] - skill.hours).toFixed(1)} hours to Lvl ${level + 1}`;
-                            break;
+            if (tooltipType === 'progress-overall') {
+                tooltipText = trigger.dataset.tooltipText;
+            } else {
+                const card = trigger.closest('.stat');
+                if (card) {
+                    const skillId = card.dataset.skillId;
+                    const skill = characterData.skills[skillId];
+                    if (skill) {
+                        switch (tooltipType) {
+                            case 'notes':
+                                tooltipText = skill.notes || 'No notes for this skill.';
+                                break;
+                            case 'hours':
+                                tooltipText = `${Math.round(skill.hours)} hours`;
+                                break;
+                            case 'progress':
+                                const level = getLevelFromHours(skill.hours, characterData.totalHoursGoal);
+                                const cache = characterData.totalHoursGoal === 1000 ? hoursCache1k : hoursCache10k;
+                                tooltipText = level >= MAX_LEVEL ? "Max Level!" : `${(cache[level + 1] - skill.hours).toFixed(1)} hours to Lvl ${level + 1}`;
+                                break;
+                        }
                     }
                 }
             }

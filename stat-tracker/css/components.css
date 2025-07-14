@@ -154,6 +154,8 @@ body.light-mode .stat .card-header img {
 }
 .total-level-card .card-sub-value {
     background-color: transparent;
+    padding: 0;
+    color: #fff;
 }
 
 .card-progress-bar {
@@ -403,30 +405,13 @@ body.light-mode .summary-item img {
     text-transform: none;
 }
 
-/* Level Display Toggle */
-.level-display-toggle {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-    background-color: var(--skill-bg);
-    border-radius: 8px;
-    padding: 4px;
-    border: 1px solid var(--border-color);
-}
-.toggle-button {
-    flex-grow: 1;
-    padding: 8px 10px;
-    border: none;
-    background-color: transparent;
-    color: var(--text-secondary);
+.overall-label-badge {
+    font-size: 0.8em;
     font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    border-radius: 6px;
-    font-size: 0.9em;
-}
-.toggle-button.active {
-    background: var(--gradient-purple);
+    padding: 2px 10px;
+    border-radius: 10px;
     color: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-transform: none;
+    background: rgba(255, 255, 255, 0.2);
+    display: inline-block;
 }

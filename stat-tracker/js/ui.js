@@ -4,14 +4,16 @@ import { characterData } from './state.js';
 
 let skillChart = null;
 
-export const hoursCache1k = Array.from({ length: MAX_LEVEL + 1 }, (_, i) => getHoursForLevel(i, 1000));
-export const hoursCache10k = Array.from({ length: MAX_LEVEL + 1 }, (_, i) => getHoursForLevel(i, 10000));
+// --- Helper Functions ---
 
 function getHoursForLevel(level, goal) {
     if (level <= 1) return 0;
     if (level > MAX_LEVEL) level = MAX_LEVEL;
     return goal * Math.pow(Math.log(level) / Math.log(MAX_LEVEL), 3);
 }
+
+export const hoursCache1k = Array.from({ length: MAX_LEVEL + 1 }, (_, i) => getHoursForLevel(i, 1000));
+export const hoursCache10k = Array.from({ length: MAX_LEVEL + 1 }, (_, i) => getHoursForLevel(i, 10000));
 
 export function getLevelFromHours(hours, goal) {
     const cache = goal === 1000 ? hoursCache1k : hoursCache10k;
@@ -30,6 +32,40 @@ export function getRankFromHours(hours) {
     if (hours >= thresholds.Adept) return 'Adept';
     return 'Beginner';
 }
+
+// --- Component Factory ---
+
+function createStatCard(cardData) {
+    const { id, isOverall = false, title, icon, level, rank, class: skillClass } = cardData;
+
+    const cardTypeClass = isOverall ? 'total-level-card' : 'stat';
+    const subValueContent = isOverall
+        ? `<span class="overall-label-badge">Overall Level</span>`
+        : `<div class="skill-class-badge">${skillClass}</div>`;
+    const rankText = isOverall ? '' : `<div class="skill-rank">${rank}</div>`;
+    const tooltipType = isOverall ? 'progress-overall' : 'progress';
+
+    return `
+        <div id="${id}" class="${cardTypeClass}" data-skill-id="${id}">
+            <div class="card-header">
+                <img src="${icon}" alt="${title} Icon">
+                <span class="skill-name">${title}</span>
+                ${!isOverall ? '<span class="tooltip-trigger" data-tooltip-type="notes">?</span>' : ''}
+            </div>
+            <div class="card-level-container">
+                <div class="card-level-value" data-tooltip-type="hours">${level}</div>
+                ${rankText}
+            </div>
+            <div class="card-sub-value">${subValueContent}</div>
+            <div class="card-progress-bar" data-tooltip-type="${tooltipType}">
+                <div class="progress"></div>
+            </div>
+        </div>
+    `;
+}
+
+
+// --- UI Building Functions ---
 
 export function applyTheme() {
     document.body.classList.toggle('dark-mode', characterData.theme === 'dark');
@@ -78,31 +114,16 @@ export function buildChart() {
             maintainAspectRatio: true,
             scales: {
                 r: {
-                    angleLines: {
-                        color: gridColor
-                    },
-                    grid: {
-                        color: gridColor
-                    },
-                    pointLabels: {
-                        color: labelColor,
-                        font: {
-                            size: 14,
-                        }
-                    },
-                    ticks: {
-                        color: labelColor,
-                        backdropColor: 'transparent',
-                        stepSize: Math.ceil(maxLevel / 5)
-                    },
+                    angleLines: { color: gridColor },
+                    grid: { color: gridColor },
+                    pointLabels: { color: labelColor, font: { size: 14 } },
+                    ticks: { color: labelColor, backdropColor: 'transparent', stepSize: Math.ceil(maxLevel / 5) },
                     suggestedMin: 0,
                     suggestedMax: maxLevel
                 }
             },
             plugins: {
-                legend: {
-                    display: false
-                }
+                legend: { display: false }
             }
         }
     });
@@ -112,53 +133,36 @@ export function buildUI() {
     elements.statGrid.innerHTML = '';
     elements.skillSelect.innerHTML = '';
     elements.editSkillsContainer.innerHTML = '';
-    if (elements.characterNameHeader) {
-        elements.characterNameHeader.textContent = characterData.characterName;
-    }
+    elements.characterNameHeader.textContent = characterData.characterName;
     elements.charNameInput.value = characterData.characterName;
-
     elements.hardModeToggle.checked = characterData.totalHoursGoal === 10000;
     elements.themeToggle.checked = characterData.theme === 'dark';
 
-    elements.statGrid.innerHTML = `
-        <div id="total-level-card" class="total-level-card">
-            <div class="card-header">
-                <img src="https://img.icons8.com/ios-filled/50/ffffff/star.png" alt="Overall Icon">
-                <span>Overall</span>
-            </div>
-            <div class="card-level-container">
-                <div id="total-level-value" class="card-level-value">0</div>
-            </div>
-            <div class="card-sub-value">Overall Level</div>
-            <div class="card-progress-bar" data-tooltip-type="progress-overall">
-                <div class="progress"></div>
-            </div>
-        </div>
-    `;
+    // Create the Overall Card
+    elements.statGrid.innerHTML += createStatCard({
+        id: 'overall-card',
+        isOverall: true,
+        title: 'Overall',
+        icon: 'https://img.icons8.com/ios-filled/50/ffffff/star.png',
+        level: 0
+    });
 
+    // Create Skill Cards
     characterData.skillOrder.forEach((skillId, index) => {
         const skill = characterData.skills[skillId];
         if (!skill) return;
 
-        elements.statGrid.innerHTML += `
-            <div class="stat" data-skill-id="${skillId}">
-                <div class="card-header">
-                    <img src="${skill.icon}" alt="${skill.displayName} Icon">
-                    <span class="skill-name">${skill.displayName}</span>
-                    <span class="tooltip-trigger" data-tooltip-type="notes">?</span>
-                </div>
-                <div class="card-level-container">
-                    <div class="card-level-value" data-tooltip-type="hours">0</div>
-                    <div class="skill-rank"></div>
-                </div>
-                <div class="skill-class-badge"></div>
-                <div class="card-progress-bar" data-tooltip-type="progress">
-                    <div class="progress"></div>
-                </div>
-            </div>`;
+        elements.statGrid.innerHTML += createStatCard({
+            id: skillId,
+            title: skill.displayName,
+            icon: skill.icon,
+            level: 0,
+            rank: 'Beginner',
+            class: skill.class
+        });
 
         elements.skillSelect.innerHTML += `<option value="${skillId}">${skill.displayName}</option>`;
-
+        
         const iconOptions = ICON_LIBRARY.map(icon => `<option value="${icon.url}" ${skill.icon === icon.url ? 'selected' : ''}>${icon.name}</option>`).join('');
         const classOptions = SKILL_CLASSES.map(c => `<option value="${c}" ${skill.class === c ? 'selected' : ''}>${c}</option>`).join('');
 
@@ -174,21 +178,9 @@ export function buildUI() {
                     </div>
                 </div>
                 <div class="edit-box-content">
-                    <div class="form-group">
-                        <label>Icon:</label>
-                        <div class="icon-select-wrapper">
-                            <select class="edit-icon-select">${iconOptions}</select>
-                            <img src="${skill.icon}" class="icon-preview" alt="Icon preview">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Class:</label>
-                        <select class="edit-class">${classOptions}</select>
-                    </div>
-                    <div class="form-group">
-                        <label>Notes:</label>
-                        <textarea class="edit-notes">${skill.notes || ''}</textarea>
-                    </div>
+                    <div class="form-group"><label>Icon:</label><div class="icon-select-wrapper"><select class="edit-icon-select">${iconOptions}</select><img src="${skill.icon}" class="icon-preview" alt="Icon preview"></div></div>
+                    <div class="form-group"><label>Class:</label><select class="edit-class">${classOptions}</select></div>
+                    <div class="form-group"><label>Notes:</label><textarea class="edit-notes">${skill.notes || ''}</textarea></div>
                 </div>
             </div>`;
     });
@@ -199,7 +191,6 @@ export function updateAllStatsDisplay() {
     let totalLevelSum = 0;
     let totalHours = 0;
     const goal = characterData.totalHoursGoal;
-    const cache = goal === 1000 ? hoursCache1k : hoursCache10k;
     const numberOfSkills = characterData.skillOrder.length;
 
     characterData.skillOrder.forEach(skillId => {
@@ -209,47 +200,31 @@ export function updateAllStatsDisplay() {
         totalLevelSum += level;
         totalHours += skill.hours;
 
-        const statElement = document.querySelector(`.stat[data-skill-id="${skillId}"]`);
+        const statElement = document.getElementById(skillId);
         if (statElement) {
             statElement.querySelector('.card-level-value').textContent = level;
             statElement.querySelector('.skill-rank').textContent = getRankFromHours(skill.hours);
-            
             const classBadge = statElement.querySelector('.skill-class-badge');
             classBadge.textContent = skill.class;
             classBadge.className = `skill-class-badge ${skill.class?.toLowerCase()}`;
-
-            const hoursForNextLevel = cache[level + 1] || cache[MAX_LEVEL];
-            const progressPercentage = level >= MAX_LEVEL ? 100 : ((skill.hours - cache[level]) / (hoursForNextLevel - cache[level])) * 100;
-            statElement.querySelector('.progress').style.width = `${progressPercentage}%`;
+            const progress = (level / MAX_LEVEL) * 100;
+            statElement.querySelector('.progress').style.width = `${progress}%`;
         }
     });
 
     const averageLevel = numberOfSkills > 0 ? totalLevelSum / numberOfSkills : 0;
     const overallLevel = Math.floor(averageLevel);
 
-    const totalLevelCard = document.getElementById('total-level-card');
-    if (totalLevelCard) {
-        const totalLevelValueElement = totalLevelCard.querySelector('#total-level-value');
-        totalLevelValueElement.textContent = overallLevel;
-        totalLevelValueElement.dataset.tooltipText = `${Math.round(totalHours)} Total Hours`;
-
-        const progressBarContainer = totalLevelCard.querySelector('.card-progress-bar');
+    const overallCard = document.getElementById('overall-card');
+    if (overallCard) {
+        overallCard.querySelector('.card-level-value').textContent = overallLevel;
+        overallCard.dataset.tooltipText = `${Math.round(totalHours)} Total Hours`;
         const nextOverallLevel = overallLevel + 1;
-        const requiredForCurrent = overallLevel * numberOfSkills;
         const requiredForNext = nextOverallLevel * numberOfSkills;
-        const totalSpan = requiredForNext - requiredForCurrent;
-
-        if (totalSpan > 0) {
-            const currentProgressInSpan = totalLevelSum - requiredForCurrent;
-            const progressPercentage = (currentProgressInSpan / totalSpan) * 100;
-            progressBarContainer.querySelector('.progress').style.width = `${progressPercentage}%`;
-            
-            const levelsNeeded = requiredForNext - totalLevelSum;
-            progressBarContainer.dataset.tooltipText = `${levelsNeeded} more total levels for Lvl ${nextOverallLevel}`;
-        } else {
-            progressBarContainer.querySelector('.progress').style.width = '100%';
-            progressBarContainer.dataset.tooltipText = `Max progress for Overall ${overallLevel}!`;
-        }
+        const levelsNeeded = requiredForNext - totalLevelSum;
+        const progressPercentage = ((averageLevel - overallLevel) * 100);
+        overallCard.querySelector('.progress').style.width = `${progressPercentage}%`;
+        overallCard.querySelector('.card-progress-bar').dataset.tooltipText = `${levelsNeeded.toFixed(0)} more total levels for Lvl ${nextOverallLevel}`;
     }
 
     if (skillChart && elements.skillChartCanvas.offsetParent !== null) {
