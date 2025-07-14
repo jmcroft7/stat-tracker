@@ -7,6 +7,12 @@ function initializeApp() {
     applyTheme();
     buildUI();
     setupEventListeners();
+
+    // Listen for state changes and update the UI accordingly
+    window.addEventListener('state-updated', () => {
+        console.log('State updated, rebuilding UI...');
+        buildUI();
+    });
 }
 
 window.addEventListener('load', initializeApp);

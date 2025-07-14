@@ -2,6 +2,10 @@ import { ICON_LIBRARY, SKILL_CLASSES } from './config.js';
 
 export let characterData = {};
 
+function dispatchStateUpdate() {
+    window.dispatchEvent(new CustomEvent('state-updated'));
+}
+
 export function getDefaultData() {
     const defaultSkills = {
         'skill1': { displayName: 'Project', icon: ICON_LIBRARY.find(i => i.name === 'Checklist').url, hours: 0, notes: '', class: 'Work' },
@@ -51,6 +55,7 @@ export function updateSkillHours(skillId, hoursToAdd) {
         characterData.skills[skillId].hours += hoursToAdd;
         characterData.hourLogs.push({ date: new Date().toISOString(), skillId: skillId, hours: hoursToAdd });
         saveData();
+        dispatchStateUpdate();
     }
 }
 
@@ -59,6 +64,7 @@ export function addSkill() {
     characterData.skills[newId] = { displayName: 'New Skill', icon: ICON_LIBRARY.find(i => i.name === 'Plus').url, hours: 0, notes: '', class: SKILL_CLASSES[0] };
     characterData.skillOrder.push(newId);
     saveData();
+    dispatchStateUpdate();
 }
 
 export function deleteSkill(skillId) {
@@ -66,6 +72,7 @@ export function deleteSkill(skillId) {
         delete characterData.skills[skillId];
         characterData.skillOrder = characterData.skillOrder.filter(id => id !== skillId);
         saveData();
+        dispatchStateUpdate();
     }
 }
 
@@ -77,6 +84,7 @@ export function reorderSkill(skillId, direction) {
         [characterData.skillOrder[index], characterData.skillOrder[index + 1]] = [characterData.skillOrder[index + 1], characterData.skillOrder[index]];
     }
     saveData();
+    dispatchStateUpdate();
 }
 
 export function saveAllSkillEdits(edits) {
@@ -91,19 +99,23 @@ export function saveAllSkillEdits(edits) {
         }
     });
     saveData();
+    dispatchStateUpdate();
 }
 
 export function setHardMode(isHardMode) {
     characterData.totalHoursGoal = isHardMode ? 10000 : 1000;
     saveData();
+    dispatchStateUpdate();
 }
 
 export function setTheme(theme) {
     characterData.theme = theme;
     saveData();
+    // Theme updates are visual only, no need to dispatch a full state update
 }
 
 export function loadFromFile(data) {
     Object.assign(characterData, data);
     saveData();
+    dispatchStateUpdate();
 }

@@ -1,7 +1,7 @@
 import { elements } from './elements.js';
 import * as state from './state.js';
 import {
-    navigateTo, buildUI, updateAllStatsDisplay,
+    navigateTo,
     applyTheme, buildRecentActivityPage, getLevelFromHours,
     hoursCache1k, hoursCache10k, buildChart
 } from './ui.js';
@@ -39,7 +39,6 @@ export function setupEventListeners() {
         if (skillId && !isNaN(hoursToAdd) && hoursToAdd > 0) {
             state.updateSkillHours(skillId, hoursToAdd);
             elements.hoursInput.value = '';
-            updateAllStatsDisplay();
             navigateTo('stats');
         }
     });
@@ -60,13 +59,11 @@ export function setupEventListeners() {
             });
         });
         state.saveAllSkillEdits(edits);
-        buildUI();
         alert("Changes saved!");
     });
 
     elements.addSkillBtn.addEventListener('click', () => {
         state.addSkill();
-        buildUI();
     });
 
     elements.editSkillsContainer.addEventListener('click', e => {
@@ -80,7 +77,6 @@ export function setupEventListeners() {
             const skillName = state.characterData.skills[skillId].displayName;
             if (confirm(`Are you sure you want to delete "${skillName}"?`)) {
                 state.deleteSkill(skillId);
-                buildUI();
             }
         } else if (button.classList.contains('toggle-minimize-btn')) {
             box.classList.toggle('collapsed');
@@ -88,7 +84,6 @@ export function setupEventListeners() {
         } else if (button.classList.contains('reorder-btn')) {
             const dir = button.dataset.dir;
             state.reorderSkill(skillId, dir);
-            buildUI();
         }
     });
 
@@ -174,7 +169,6 @@ export function setupEventListeners() {
                 const data = JSON.parse(event.target.result);
                 state.loadFromFile(data);
                 applyTheme();
-                buildUI();
                 alert("Character data loaded successfully!");
             } catch (error) {
                 alert("Error parsing file.");
@@ -186,7 +180,6 @@ export function setupEventListeners() {
 
     elements.hardModeToggle.addEventListener('change', (e) => {
         state.setHardMode(e.target.checked);
-        updateAllStatsDisplay();
     });
 
     elements.themeToggle.addEventListener('change', (e) => {
