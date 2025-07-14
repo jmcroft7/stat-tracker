@@ -1,14 +1,14 @@
 export const MAX_LEVEL = 99;
 
 export const SKILL_CLASSES = [
-    'Work',
-    'Home life',
-    'Finance',
-    'Health',
-    'Hobbies',
-    'Relationships',
-    'Self Care',
-    'Education',
+    '💼 Work',
+    '🏡 Home life',
+    '💰 Finance',
+    '❤️ Health',
+    '🎨 Hobbies',
+    '🤝 Relationships',
+    '🌱 Personal Growth',
+    '🎓 Education',
 ];
 
 export const ICON_LIBRARY = [

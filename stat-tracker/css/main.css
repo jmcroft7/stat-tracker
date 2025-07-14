@@ -17,13 +17,13 @@
 }
 
 body.dark-mode {
-    --bg-color: #121212;
-    --container-bg: #121212;
-    --border-color: #3e3155;
-    --skill-bg: #1e1133;
-    --skill-border: #3e3155;
-    --text-primary: #e0e0e0;
-    --text-secondary: #a0a0a0;
+    --bg-color: #1a1a1a;
+    --container-bg: #1a1a1a;
+    --border-color: #444444;
+    --skill-bg: #2c2c2c;
+    --skill-border: #444444;
+    --text-primary: #f0f0f0;
+    --text-secondary: #a9a9a9;
     --texture-line-color: rgba(255, 255, 255, 0.02);
 }
 

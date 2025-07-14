@@ -7,6 +7,8 @@ import {
 } from './ui.js';
 import { MAX_LEVEL } from './config.js';
 
+let isSkillsPageDirty = false;
+
 export function setupEventListeners() {
     // --- Navigation ---
     const navLinks = { ...elements.nav, settings: document.getElementById('nav-settings'), about: document.getElementById('nav-about') };
@@ -16,6 +18,19 @@ export function setupEventListeners() {
         if (navElement) {
             navElement.addEventListener('click', (e) => {
                 e.preventDefault();
+
+                const currentPageElement = document.querySelector('.page:not(.hidden)');
+                const currentPageKey = currentPageElement ? Object.keys(elements.pages).find(k => elements.pages[k] === currentPageElement) : null;
+
+                // Check for unsaved changes before navigating away from the skills page
+                if (currentPageKey === 'skills' && isSkillsPageDirty) {
+                    if (!confirm('You have unsaved changes. Are you sure you want to discard them?')) {
+                        return; // Stop the navigation
+                    }
+                }
+                // If we are leaving the page (by choice or after saving), reset the dirty flag
+                isSkillsPageDirty = false;
+
                 if (key === 'recent') buildRecentActivityPage();
                 if (key === 'dashboard') buildChart();
                 navigateTo(key);
@@ -96,6 +111,7 @@ export function setupEventListeners() {
             });
         });
         state.saveAllSkillEdits(edits);
+        isSkillsPageDirty = false; // Reset the flag after saving
         alert("Changes saved!");
     });
 
@@ -103,9 +119,15 @@ export function setupEventListeners() {
         state.addSkill();
     });
 
+    // Set dirty flag when any input on the skills page changes
+    elements.editSkillsContainer.addEventListener('input', () => {
+        isSkillsPageDirty = true;
+    });
+
     elements.editSkillsContainer.addEventListener('click', e => {
         const button = e.target.closest('.skill-edit-box__control-btn');
         if (!button) return;
+        isSkillsPageDirty = true; // Deleting or reordering also counts as a change
         const box = button.closest('.skill-edit-box');
         if (!box) return;
         const skillId = box.dataset.skillId;
@@ -128,6 +150,7 @@ export function setupEventListeners() {
         if (e.target.classList.contains('edit-icon-select')) {
             const previewImg = e.target.closest('.icon-select-wrapper').querySelector('.icon-preview');
             previewImg.src = e.target.value;
+            isSkillsPageDirty = true;
         }
     });
 
