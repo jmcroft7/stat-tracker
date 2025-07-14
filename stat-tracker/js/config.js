@@ -7,7 +7,7 @@ export const SKILL_CLASSES = [
     'Health',
     'Hobbies',
     'Relationships',
-    'Personal Growth',
+    'Self Care',
     'Education',
 ];
 

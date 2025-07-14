@@ -1,4 +1,4 @@
-import { MAX_LEVEL } from './config.js';
+import { MAX_LEVEL, SKILL_CLASSES } from './config.js';
 import { elements } from './elements.js';
 import { characterData } from './state.js';
 import { createStatCard } from './components/StatCard.js';
@@ -49,14 +49,41 @@ export function buildChart() {
     if (skillChart) {
         skillChart.destroy();
     }
+    
+    // Update button active states
+    document.querySelectorAll('#graph-page-filters .stat-filter-btn').forEach(btn => {
+        btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeGraphView);
+    });
+
 
     const ctx = elements.skillChartCanvas.getContext('2d');
     const isLightMode = characterData.theme === 'light';
     const gridColor = isLightMode ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
     const labelColor = isLightMode ? '#333' : '#eee';
+    
+    let labels = [];
+    let data = [];
+    const goal = characterData.totalHoursGoal;
 
-    const labels = characterData.skillOrder.map(id => characterData.skills[id].displayName);
-    const data = characterData.skillOrder.map(id => getLevelFromHours(characterData.skills[id].hours, characterData.totalHoursGoal));
+    if (characterData.activeGraphView === 'class') {
+        const classHours = {};
+        SKILL_CLASSES.forEach(c => classHours[c] = 0);
+        
+        for (const skillId in characterData.skills) {
+            const skill = characterData.skills[skillId];
+            if (skill.class && classHours.hasOwnProperty(skill.class)) {
+                classHours[skill.class] += skill.hours;
+            }
+        }
+
+        labels = Object.keys(classHours);
+        data = Object.values(classHours).map(hours => getLevelFromHours(hours, goal));
+
+    } else { // Default to 'skill' view
+        labels = characterData.skillOrder.map(id => characterData.skills[id].displayName);
+        data = characterData.skillOrder.map(id => getLevelFromHours(characterData.skills[id].hours, goal));
+    }
+
 
     let maxLevel = Math.max(...data);
     if (maxLevel <= 1) {

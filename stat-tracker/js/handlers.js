@@ -55,6 +55,14 @@ export function setupEventListeners() {
         }
     });
 
+    document.getElementById('graph-page-filters').addEventListener('click', (e) => {
+        const target = e.target.closest('.stat-filter-btn');
+        if (target) {
+            const view = target.dataset.view;
+            state.setActiveGraphView(view);
+        }
+    });
+
 
     // --- State-Changing Actions ---
     elements.addHoursBtn.addEventListener('click', () => {

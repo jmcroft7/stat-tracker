@@ -1,5 +1,5 @@
 import { loadData } from './state.js';
-import { applyTheme, buildUI, updateAllStatsDisplay, buildRecentActivityPage } from './ui.js';
+import { applyTheme, buildUI, updateAllStatsDisplay, buildRecentActivityPage, buildChart } from './ui.js';
 import { setupEventListeners } from './handlers.js';
 
 function initializeApp() {
@@ -30,6 +30,12 @@ function initializeApp() {
     window.addEventListener('recent-view-changed', () => {
         console.log('Recent view changed, rebuilding recent page...');
         buildRecentActivityPage();
+    });
+    
+    // Listen for view changes on the graph page
+    window.addEventListener('graph-view-changed', () => {
+        console.log('Graph view changed, rebuilding chart...');
+        buildChart();
     });
 }
 
