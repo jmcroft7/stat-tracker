@@ -8,15 +8,20 @@ import {
 import { MAX_LEVEL } from './config.js';
 
 export function setupEventListeners() {
-    Object.keys(elements.nav).forEach(key => {
-        const navElement = elements.nav[key];
+    // --- Navigation ---
+    const navLinks = { ...elements.nav, settings: document.getElementById('nav-settings'), about: document.getElementById('nav-about') };
+
+    Object.keys(navLinks).forEach(key => {
+        const navElement = navLinks[key];
         if (navElement) {
             navElement.addEventListener('click', (e) => {
-                if (navElement.id !== 'nav-more') {
-                    e.preventDefault();
-                    if (key === 'recent') buildRecentActivityPage();
-                    if (key === 'dashboard') buildChart();
-                    navigateTo(key);
+                e.preventDefault();
+                if (key === 'recent') buildRecentActivityPage();
+                if (key === 'dashboard') buildChart();
+                navigateTo(key);
+                // Close dropdown if a dropdown link was clicked
+                if (key === 'settings' || key === 'about') {
+                    elements.moreDropdown.classList.add('hidden');
                 }
             });
         }
@@ -33,6 +38,7 @@ export function setupEventListeners() {
         }
     });
 
+    // --- State-Changing Actions ---
     elements.addHoursBtn.addEventListener('click', () => {
         const skillId = elements.skillSelect.value;
         const hoursToAdd = parseFloat(elements.hoursInput.value);
@@ -42,15 +48,20 @@ export function setupEventListeners() {
             navigateTo('stats');
         }
     });
+    
+    // Auto-save character name on input blur
+    elements.charNameInput.addEventListener('blur', () => {
+        const newName = elements.charNameInput.value.trim();
+        if (newName && newName !== state.characterData.characterName) {
+            state.updateCharacterName(newName);
+        }
+    });
 
     elements.saveEditsBtn.addEventListener('click', () => {
-        const edits = {
-            characterName: elements.charNameInput.value.trim() || 'Adventurer',
-            skills: []
-        };
+        const edits = [];
         document.querySelectorAll('.skill-edit-box').forEach(box => {
             const skillId = box.dataset.skillId;
-            edits.skills.push({
+            edits.push({
                 id: skillId,
                 displayName: box.querySelector('.skill-edit-box__display-name').value,
                 icon: box.querySelector('.edit-icon-select').value,

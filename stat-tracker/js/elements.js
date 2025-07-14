@@ -1,6 +1,7 @@
 export const elements = {
     pages: { stats: document.getElementById('stats-page'), dashboard: document.getElementById('dashboard-page'), logHours: document.getElementById('log-hours-page'), recent: document.getElementById('recent-page'), skills: document.getElementById('skills-page'), settings: document.getElementById('settings-page'), about: document.getElementById('about-page') },
     nav: { stats: document.getElementById('nav-stats'), dashboard: document.getElementById('nav-dashboard'), logHours: document.getElementById('nav-log-hours'), recent: document.getElementById('nav-recent'), skills: document.getElementById('nav-skills'), settings: document.getElementById('nav-settings'), about: document.getElementById('nav-about') },
+    characterNameHeader: document.getElementById('character-name-header'),
     totalLevelValue: document.getElementById('total-level-value'),
     statGrid: document.getElementById('stat-grid-main'),
     skillSelect: document.getElementById('skill-select'),

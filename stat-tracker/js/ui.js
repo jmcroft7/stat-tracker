@@ -103,6 +103,7 @@ export function buildUI() {
     elements.statGrid.innerHTML = '';
     elements.skillSelect.innerHTML = '';
     elements.editSkillsContainer.innerHTML = '';
+    elements.characterNameHeader.textContent = `${characterData.characterName}'s Stats`;
     elements.charNameInput.value = characterData.characterName;
     elements.hardModeToggle.checked = characterData.totalHoursGoal === 10000;
     elements.themeToggle.checked = characterData.theme === 'dark';
@@ -188,16 +189,23 @@ export function updateAllStatsDisplay() {
 }
 
 export function navigateTo(pageKey) {
+    // Hide all pages
     Object.values(elements.pages).forEach(p => p.classList.add('hidden'));
-    elements.pages[pageKey].classList.remove('hidden');
     
+    // Show the target page
+    if (elements.pages[pageKey]) {
+        elements.pages[pageKey].classList.remove('hidden');
+    }
+
+    // Update nav button active states
     document.querySelectorAll('.nav__button').forEach(b => b.classList.remove('nav__button--active'));
 
-    const targetNav = elements.nav[pageKey];
-    if (targetNav) {
-        targetNav.classList.add('nav__button--active');
-    } else if (pageKey === 'about' || pageKey === 'settings') {
+    const isDropdownItem = pageKey === 'about' || pageKey === 'settings';
+
+    if (isDropdownItem) {
         elements.moreBtn.classList.add('nav__button--active');
+    } else if (elements.nav[pageKey]) {
+        elements.nav[pageKey].classList.add('nav__button--active');
     }
 }
 
@@ -246,7 +254,7 @@ export function buildWeeklySummaryView() {
         return logDate >= startDate && logDate <= endDate;
     });
 
-    const header = `Week of ${startDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} - ${endDate.toLocaleDate-String(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    const header = `Week of ${startDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} - ${endDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`;
     renderSummary(weeklyLogs, header, 'week');
 }
 

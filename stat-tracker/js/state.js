@@ -54,6 +54,12 @@ export function loadData() {
 
 // --- State Modification Functions ---
 
+export function updateCharacterName(newName) {
+    characterData.characterName = newName || 'Adventurer';
+    saveData();
+    dispatchStructureUpdate(); // Rebuild UI to show new name in header
+}
+
 export function updateSkillHours(skillId, hoursToAdd) {
     if (characterData.skills[skillId] && hoursToAdd > 0) {
         characterData.skills[skillId].hours += hoursToAdd;
@@ -92,8 +98,7 @@ export function reorderSkill(skillId, direction) {
 }
 
 export function saveAllSkillEdits(edits) {
-    characterData.characterName = edits.characterName;
-    edits.skills.forEach(skillEdit => {
+    edits.forEach(skillEdit => {
         const { id, displayName, icon, skillClass, notes } = skillEdit;
         if (characterData.skills[id]) {
             characterData.skills[id].displayName = displayName;
