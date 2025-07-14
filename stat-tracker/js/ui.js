@@ -64,6 +64,33 @@ function createStatCard(cardData) {
     `;
 }
 
+function createSkillEditBox(skill, skillId, index, totalSkills) {
+    const box = document.createElement('div');
+    box.className = 'skill-edit-box collapsed';
+    box.dataset.skillId = skillId;
+
+    const iconOptions = ICON_LIBRARY.map(icon => `<option value="${icon.url}" ${skill.icon === icon.url ? 'selected' : ''}>${icon.name}</option>`).join('');
+    const classOptions = SKILL_CLASSES.map(c => `<option value="${c}" ${skill.class === c ? 'selected' : ''}>${c}</option>`).join('');
+
+    box.innerHTML = `
+        <div class="edit-box-header">
+            <input type="text" class="edit-display-name editable-header" value="${skill.displayName}">
+            <div class="edit-box-controls">
+                <button class="reorder-btn" data-dir="up" title="Move Up" ${index === 0 ? 'disabled' : ''}>&uarr;</button>
+                <button class="reorder-btn" data-dir="down" title="Move Down" ${index === totalSkills - 1 ? 'disabled' : ''}>&darr;</button>
+                <button class="toggle-minimize-btn" title="Minimize/Expand">+</button>
+                <button class="delete-skill-btn" title="Delete Skill">&times;</button>
+            </div>
+        </div>
+        <div class="edit-box-content">
+            <div class="form-group"><label>Icon:</label><div class="icon-select-wrapper"><select class="edit-icon-select">${iconOptions}</select><img src="${skill.icon}" class="icon-preview" alt="Icon preview"></div></div>
+            <div class="form-group"><label>Class:</label><select class="edit-class">${classOptions}</select></div>
+            <div class="form-group"><label>Notes:</label><textarea class="edit-notes">${skill.notes || ''}</textarea></div>
+        </div>
+    `;
+    return box;
+}
+
 
 // --- UI Building Functions ---
 
@@ -147,7 +174,7 @@ export function buildUI() {
         level: 0
     });
 
-    // Create Skill Cards
+    // Create Skill Cards and Edit Boxes
     characterData.skillOrder.forEach((skillId, index) => {
         const skill = characterData.skills[skillId];
         if (!skill) return;
@@ -163,26 +190,8 @@ export function buildUI() {
 
         elements.skillSelect.innerHTML += `<option value="${skillId}">${skill.displayName}</option>`;
         
-        const iconOptions = ICON_LIBRARY.map(icon => `<option value="${icon.url}" ${skill.icon === icon.url ? 'selected' : ''}>${icon.name}</option>`).join('');
-        const classOptions = SKILL_CLASSES.map(c => `<option value="${c}" ${skill.class === c ? 'selected' : ''}>${c}</option>`).join('');
-
-        elements.editSkillsContainer.innerHTML += `
-            <div class="skill-edit-box collapsed" data-skill-id="${skillId}">
-                <div class="edit-box-header">
-                    <input type="text" class="edit-display-name editable-header" value="${skill.displayName}">
-                    <div class="edit-box-controls">
-                        <button class="reorder-btn" data-dir="up" title="Move Up" ${index === 0 ? 'disabled' : ''}>&uarr;</button>
-                        <button class="reorder-btn" data-dir="down" title="Move Down" ${index === characterData.skillOrder.length - 1 ? 'disabled' : ''}>&darr;</button>
-                        <button class="toggle-minimize-btn" title="Minimize/Expand">+</button>
-                        <button class="delete-skill-btn" title="Delete Skill">&times;</button>
-                    </div>
-                </div>
-                <div class="edit-box-content">
-                    <div class="form-group"><label>Icon:</label><div class="icon-select-wrapper"><select class="edit-icon-select">${iconOptions}</select><img src="${skill.icon}" class="icon-preview" alt="Icon preview"></div></div>
-                    <div class="form-group"><label>Class:</label><select class="edit-class">${classOptions}</select></div>
-                    <div class="form-group"><label>Notes:</label><textarea class="edit-notes">${skill.notes || ''}</textarea></div>
-                </div>
-            </div>`;
+        const skillEditBox = createSkillEditBox(skill, skillId, index, characterData.skillOrder.length);
+        elements.editSkillsContainer.appendChild(skillEditBox);
     });
     updateAllStatsDisplay();
 }
