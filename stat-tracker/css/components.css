@@ -1,11 +1,11 @@
 /* Navigation */
 .nav__button {
     flex-grow: 1;
-    padding: 12px 5px;
+    padding: 10px 5px;
     background: transparent;
     border: none;
     color: var(--text-secondary);
-    font-size: 0.85em;
+    font-size: 0.9em;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
