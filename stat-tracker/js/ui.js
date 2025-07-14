@@ -42,23 +42,23 @@ function createStatCard(cardData) {
     const subValueContent = isOverall
         ? `<span class="overall-label-badge">Overall Level</span>`
         : `<div class="skill-class-badge">${skillClass}</div>`;
-    const rankText = isOverall ? '' : `<div class="skill-rank">${rank}</div>`;
+    const rankText = isOverall ? '' : `<div class="stat__rank">${rank}</div>`;
     const tooltipType = isOverall ? 'progress-overall' : 'progress';
 
     return `
         <div id="${id}" class="${cardTypeClass}" data-skill-id="${id}">
-            <div class="card-header">
-                <img src="${icon}" alt="${title} Icon">
-                <span class="skill-name">${title}</span>
+            <div class="stat__header">
+                <img src="${icon}" class="stat__icon" alt="${title} Icon">
+                <span class="stat__name">${title}</span>
                 ${!isOverall ? '<span class="tooltip-trigger" data-tooltip-type="notes">?</span>' : ''}
             </div>
-            <div class="card-level-container">
-                <div class="card-level-value" data-tooltip-type="hours">${level}</div>
+            <div class="stat__level-container">
+                <div class="stat__level-value" data-tooltip-type="hours">${level}</div>
                 ${rankText}
             </div>
-            <div class="card-sub-value">${subValueContent}</div>
-            <div class="card-progress-bar" data-tooltip-type="${tooltipType}">
-                <div class="progress"></div>
+            <div class="stat__sub-value">${subValueContent}</div>
+            <div class="stat__progress-bar" data-tooltip-type="${tooltipType}">
+                <div class="stat__progress"></div>
             </div>
         </div>
     `;
@@ -66,23 +66,23 @@ function createStatCard(cardData) {
 
 function createSkillEditBox(skill, skillId, index, totalSkills) {
     const box = document.createElement('div');
-    box.className = 'skill-edit-box collapsed';
+    box.className = 'skill-edit-box skill-edit-box--collapsed';
     box.dataset.skillId = skillId;
 
     const iconOptions = ICON_LIBRARY.map(icon => `<option value="${icon.url}" ${skill.icon === icon.url ? 'selected' : ''}>${icon.name}</option>`).join('');
     const classOptions = SKILL_CLASSES.map(c => `<option value="${c}" ${skill.class === c ? 'selected' : ''}>${c}</option>`).join('');
 
     box.innerHTML = `
-        <div class="edit-box-header">
-            <input type="text" class="edit-display-name editable-header" value="${skill.displayName}">
-            <div class="edit-box-controls">
-                <button class="reorder-btn" data-dir="up" title="Move Up" ${index === 0 ? 'disabled' : ''}>&uarr;</button>
-                <button class="reorder-btn" data-dir="down" title="Move Down" ${index === totalSkills - 1 ? 'disabled' : ''}>&darr;</button>
-                <button class="toggle-minimize-btn" title="Minimize/Expand">+</button>
-                <button class="delete-skill-btn" title="Delete Skill">&times;</button>
+        <div class="skill-edit-box__header">
+            <input type="text" class="skill-edit-box__display-name" value="${skill.displayName}">
+            <div class="skill-edit-box__controls">
+                <button class="skill-edit-box__control-btn skill-edit-box__control-btn--reorder" data-dir="up" title="Move Up" ${index === 0 ? 'disabled' : ''}>&uarr;</button>
+                <button class="skill-edit-box__control-btn skill-edit-box__control-btn--reorder" data-dir="down" title="Move Down" ${index === totalSkills - 1 ? 'disabled' : ''}>&darr;</button>
+                <button class="skill-edit-box__control-btn skill-edit-box__control-btn--minimize" title="Minimize/Expand">+</button>
+                <button class="skill-edit-box__control-btn skill-edit-box__control-btn--delete" title="Delete Skill">&times;</button>
             </div>
         </div>
-        <div class="edit-box-content">
+        <div class="skill-edit-box__content">
             <div class="form-group"><label>Icon:</label><div class="icon-select-wrapper"><select class="edit-icon-select">${iconOptions}</select><img src="${skill.icon}" class="icon-preview" alt="Icon preview"></div></div>
             <div class="form-group"><label>Class:</label><select class="edit-class">${classOptions}</select></div>
             <div class="form-group"><label>Notes:</label><textarea class="edit-notes">${skill.notes || ''}</textarea></div>
@@ -210,13 +210,13 @@ export function updateAllStatsDisplay() {
 
         const statElement = document.getElementById(skillId);
         if (statElement) {
-            statElement.querySelector('.card-level-value').textContent = level;
-            statElement.querySelector('.skill-rank').textContent = getRankFromHours(skill.hours);
+            statElement.querySelector('.stat__level-value').textContent = level;
+            statElement.querySelector('.stat__rank').textContent = getRankFromHours(skill.hours);
             const classBadge = statElement.querySelector('.skill-class-badge');
             classBadge.textContent = skill.class;
             classBadge.className = `skill-class-badge ${skill.class?.toLowerCase()}`;
             const progress = (level / MAX_LEVEL) * 100;
-            statElement.querySelector('.progress').style.width = `${progress}%`;
+            statElement.querySelector('.stat__progress').style.width = `${progress}%`;
         }
     });
 
@@ -225,14 +225,14 @@ export function updateAllStatsDisplay() {
 
     const overallCard = document.getElementById('overall-card');
     if (overallCard) {
-        overallCard.querySelector('.card-level-value').textContent = overallLevel;
+        overallCard.querySelector('.stat__level-value').textContent = overallLevel;
         overallCard.dataset.tooltipText = `${Math.round(totalHours)} Total Hours`;
         const nextOverallLevel = overallLevel + 1;
         const requiredForNext = nextOverallLevel * numberOfSkills;
         const levelsNeeded = requiredForNext - totalLevelSum;
         const progressPercentage = ((averageLevel - overallLevel) * 100);
-        overallCard.querySelector('.progress').style.width = `${progressPercentage}%`;
-        overallCard.querySelector('.card-progress-bar').dataset.tooltipText = `${levelsNeeded.toFixed(0)} more total levels for Lvl ${nextOverallLevel}`;
+        overallCard.querySelector('.stat__progress').style.width = `${progressPercentage}%`;
+        overallCard.querySelector('.stat__progress-bar').dataset.tooltipText = `${levelsNeeded.toFixed(0)} more total levels for Lvl ${nextOverallLevel}`;
     }
 
     if (skillChart && elements.skillChartCanvas.offsetParent !== null) {
@@ -244,13 +244,13 @@ export function navigateTo(pageKey) {
     Object.values(elements.pages).forEach(p => p.classList.add('hidden'));
     elements.pages[pageKey].classList.remove('hidden');
     
-    document.querySelectorAll('.nav-tab-button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav__button').forEach(b => b.classList.remove('nav__button--active'));
 
     const targetNav = elements.nav[pageKey];
     if (targetNav) {
-        targetNav.classList.add('active');
+        targetNav.classList.add('nav__button--active');
     } else if (pageKey === 'about' || pageKey === 'settings') {
-        elements.moreBtn.classList.add('active');
+        elements.moreBtn.classList.add('nav__button--active');
     }
 }
 
