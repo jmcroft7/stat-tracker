@@ -31,7 +31,7 @@
             <div class="header">
                 <h2 id="character-name-header"></h2>
             </div>
-            <div class="stat-filters">
+            <div class="stat-filters" id="stats-page-filters">
                 <button class="stat-filter-btn" data-view="overall">Overall</button>
                 <button class="stat-filter-btn" data-view="total">Total</button>
                 <button class="stat-filter-btn" data-view="recent">Recent</button>
@@ -63,13 +63,10 @@
             <div class="header">
                 <h2>Recent Activity</h2>
             </div>
-            <div class="form-group">
-                <label for="recent-view-select">View Mode</label>
-                <select id="recent-view-select">
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                </select>
+            <div class="stat-filters" id="recent-page-filters">
+                <button class="stat-filter-btn" data-view="daily">Daily</button>
+                <button class="stat-filter-btn" data-view="weekly">Weekly</button>
+                <button class="stat-filter-btn" data-view="monthly">Monthly</button>
             </div>
             <div id="recent-activity-container"></div>
         </div>

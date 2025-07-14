@@ -14,6 +14,10 @@ function dispatchViewChange() {
     window.dispatchEvent(new CustomEvent('view-changed'));
 }
 
+function dispatchRecentViewChange() {
+    window.dispatchEvent(new CustomEvent('recent-view-changed'));
+}
+
 export function getDefaultData() {
     const defaultSkills = {
         'skill1': { displayName: 'Project', icon: 'https://img.icons8.com/ios-filled/50/ffffff/checklist.png', hours: 0, notes: '', class: 'Work' },
@@ -25,6 +29,7 @@ export function getDefaultData() {
         totalHoursGoal: 1000,
         theme: 'light',
         activeStatView: 'overall', // 'overall', 'total', or 'recent'
+        activeRecentView: 'daily', // 'daily', 'weekly', or 'monthly'
         skillOrder: ['skill1', 'skill2', 'skill3'],
         skills: defaultSkills,
         hourLogs: []
@@ -43,6 +48,7 @@ export function loadData() {
         if (!parsedData.totalHoursGoal) parsedData.totalHoursGoal = 1000;
         if (!parsedData.theme) parsedData.theme = 'light';
         if (!parsedData.activeStatView) parsedData.activeStatView = 'overall';
+        if (!parsedData.activeRecentView) parsedData.activeRecentView = 'daily';
         if (!parsedData.hourLogs) parsedData.hourLogs = [];
         for (const skillId in parsedData.skills) {
             if (parsedData.skills[skillId].notes === undefined) {
@@ -65,6 +71,14 @@ export function setActiveStatView(view) {
         characterData.activeStatView = view;
         saveData();
         dispatchViewChange();
+    }
+}
+
+export function setActiveRecentView(view) {
+    if (['daily', 'weekly', 'monthly'].includes(view)) {
+        characterData.activeRecentView = view;
+        saveData();
+        dispatchRecentViewChange();
     }
 }
 

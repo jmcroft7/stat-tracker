@@ -92,9 +92,6 @@ body.dark-mode .stat .stat__level-value,
 body.dark-mode .stat .stat__sub-value {
     color: #e0e0e0;
 }
-body.dark-mode .stat .stat__rank {
-    color: var(--accent-color);
-}
 body.dark-mode .stat .stat__icon {
     filter: none;
 }
@@ -141,7 +138,7 @@ body.light-mode .stat .stat__icon {
 .stat__rank {
     font-size: 1.2em;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--accent-color);
 }
 
 .stat__sub-value {
@@ -190,23 +187,22 @@ body.light-mode .stat .stat__icon {
     padding: 8px 16px;
     background-color: var(--skill-bg);
     border: 1px solid var(--border-color);
-    color: var(--text-secondary);
+    color: var(--text-primary);
     font-size: 0.9em;
     font-weight: 600;
     cursor: pointer;
     border-radius: 6px;
-    transition: background-color 0.2s, color 0.2s;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .stat-filter-btn:hover {
     background-color: var(--skill-border);
-    color: var(--text-primary);
 }
 
 .stat-filter-btn--active {
-    background: var(--gradient-purple);
-    color: #fff;
-    border-color: var(--highlight-color);
+    background-color: #222;
+    color: #eee;
+    border-color: #444;
 }
 
 

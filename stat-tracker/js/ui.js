@@ -109,7 +109,7 @@ export function buildUI() {
     elements.themeToggle.checked = characterData.theme === 'dark';
 
     // Update filter button active states
-    document.querySelectorAll('.stat-filter-btn').forEach(btn => {
+    document.querySelectorAll('#stats-page-filters .stat-filter-btn').forEach(btn => {
         btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeStatView);
     });
 
@@ -144,7 +144,7 @@ export function buildUI() {
 
 
         elements.skillSelect.innerHTML += `<option value="${skillId}">${skill.displayName}</option>`;
-        
+
         const skillEditBox = createSkillEditBox(skill, skillId, index, characterData.skillOrder.length);
         elements.editSkillsContainer.appendChild(skillEditBox);
     });
@@ -156,6 +156,7 @@ export function updateAllStatsDisplay() {
     let totalHours = 0;
     const goal = characterData.totalHoursGoal;
     const numberOfSkills = characterData.skillOrder.length;
+    const currentView = characterData.activeStatView;
 
     characterData.skillOrder.forEach(skillId => {
         const skill = characterData.skills[skillId];
@@ -167,7 +168,14 @@ export function updateAllStatsDisplay() {
         const statElement = document.getElementById(skillId);
         if (statElement) {
             statElement.querySelector('.stat__level-value').textContent = level;
-            statElement.querySelector('.stat__rank').textContent = getRankFromHours(skill.hours);
+
+            const rankElement = statElement.querySelector('.stat__rank');
+            if (currentView === 'total') {
+                rankElement.textContent = `(+${Math.round(skill.hours)})`;
+            } else {
+                rankElement.textContent = `(${getRankFromHours(skill.hours)})`;
+            }
+
             const classBadge = statElement.querySelector('.skill-class-badge');
             classBadge.textContent = skill.class;
             classBadge.className = `skill-class-badge ${skill.class?.toLowerCase()}`;
@@ -181,7 +189,7 @@ export function updateAllStatsDisplay() {
         const levelValueEl = mainCard.querySelector('.stat__level-value');
         levelValueEl.dataset.tooltipText = `${Math.round(totalHours)} Total Hours`;
 
-        if (characterData.activeStatView === 'total') {
+        if (currentView === 'total') {
             levelValueEl.textContent = Math.floor(totalLevelSum);
             mainCard.querySelector('.stat__progress').style.width = '100%';
             mainCard.querySelector('.stat__progress-bar').dataset.tooltipText = `${Math.round(totalHours)} Total Hours`;
@@ -195,7 +203,7 @@ export function updateAllStatsDisplay() {
             const requiredForNext = nextOverallLevel * numberOfSkills;
             const levelsNeeded = requiredForNext - totalLevelSum;
             const progressPercentage = ((averageLevel - overallLevel) * 100);
-            
+
             levelValueEl.textContent = overallLevel;
             mainCard.querySelector('.stat__progress').style.width = `${progressPercentage}%`;
             mainCard.querySelector('.stat__progress-bar').dataset.tooltipText = `${levelsNeeded.toFixed(0)} more total levels for Lvl ${nextOverallLevel}`;
@@ -212,7 +220,7 @@ export function updateAllStatsDisplay() {
 export function navigateTo(pageKey) {
     // Hide all pages
     Object.values(elements.pages).forEach(p => p.classList.add('hidden'));
-    
+
     // Show the target page
     if (elements.pages[pageKey]) {
         elements.pages[pageKey].classList.remove('hidden');
@@ -329,7 +337,12 @@ export function buildDailyLogView() {
 }
 
 export function buildRecentActivityPage() {
-    const selectedView = elements.recentViewSelect.value;
+    // Update button active states
+    document.querySelectorAll('#recent-page-filters .stat-filter-btn').forEach(btn => {
+        btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeRecentView);
+    });
+
+    const selectedView = characterData.activeRecentView;
     if (selectedView === 'monthly') {
         buildMonthlySummaryView();
     } else if (selectedView === 'weekly') {

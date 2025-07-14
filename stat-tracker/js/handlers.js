@@ -38,14 +38,23 @@ export function setupEventListeners() {
         }
     });
 
-    // --- Stat Page Filters ---
-    document.querySelector('.stat-filters').addEventListener('click', (e) => {
+    // --- Page-Specific Filters ---
+    document.getElementById('stats-page-filters').addEventListener('click', (e) => {
         const target = e.target.closest('.stat-filter-btn');
         if (target) {
             const view = target.dataset.view;
             state.setActiveStatView(view);
         }
     });
+
+    document.getElementById('recent-page-filters').addEventListener('click', (e) => {
+        const target = e.target.closest('.stat-filter-btn');
+        if (target) {
+            const view = target.dataset.view;
+            state.setActiveRecentView(view);
+        }
+    });
+
 
     // --- State-Changing Actions ---
     elements.addHoursBtn.addEventListener('click', () => {
@@ -187,7 +196,7 @@ export function setupEventListeners() {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = function(event) {
+        reader.onload = function (event) {
             try {
                 const data = JSON.parse(event.target.result);
                 state.loadFromFile(data);
@@ -210,9 +219,5 @@ export function setupEventListeners() {
         const newTheme = e.target.checked ? 'dark' : 'light';
         state.setTheme(newTheme);
         applyTheme();
-    });
-
-    elements.recentViewSelect.addEventListener('change', () => {
-        buildRecentActivityPage();
     });
 }
