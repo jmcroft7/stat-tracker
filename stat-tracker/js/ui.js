@@ -160,7 +160,6 @@ export function buildUI() {
     elements.statGrid.innerHTML = '';
     elements.skillSelect.innerHTML = '';
     elements.editSkillsContainer.innerHTML = '';
-    elements.characterNameHeader.textContent = characterData.characterName;
     elements.charNameInput.value = characterData.characterName;
     elements.hardModeToggle.checked = characterData.totalHoursGoal === 10000;
     elements.themeToggle.checked = characterData.theme === 'dark';
