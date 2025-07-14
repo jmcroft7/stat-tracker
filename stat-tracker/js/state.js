@@ -10,6 +10,10 @@ function dispatchStructureUpdate() {
     window.dispatchEvent(new CustomEvent('structure-updated'));
 }
 
+function dispatchViewChange() {
+    window.dispatchEvent(new CustomEvent('view-changed'));
+}
+
 export function getDefaultData() {
     const defaultSkills = {
         'skill1': { displayName: 'Project', icon: 'https://img.icons8.com/ios-filled/50/ffffff/checklist.png', hours: 0, notes: '', class: 'Work' },
@@ -20,6 +24,7 @@ export function getDefaultData() {
         characterName: 'Adventurer',
         totalHoursGoal: 1000,
         theme: 'light',
+        activeStatView: 'overall', // 'overall', 'total', or 'recent'
         skillOrder: ['skill1', 'skill2', 'skill3'],
         skills: defaultSkills,
         hourLogs: []
@@ -37,6 +42,7 @@ export function loadData() {
         if (!parsedData.skillOrder) parsedData.skillOrder = Object.keys(parsedData.skills);
         if (!parsedData.totalHoursGoal) parsedData.totalHoursGoal = 1000;
         if (!parsedData.theme) parsedData.theme = 'light';
+        if (!parsedData.activeStatView) parsedData.activeStatView = 'overall';
         if (!parsedData.hourLogs) parsedData.hourLogs = [];
         for (const skillId in parsedData.skills) {
             if (parsedData.skills[skillId].notes === undefined) {
@@ -53,6 +59,14 @@ export function loadData() {
 }
 
 // --- State Modification Functions ---
+
+export function setActiveStatView(view) {
+    if (['overall', 'total', 'recent'].includes(view)) {
+        characterData.activeStatView = view;
+        saveData();
+        dispatchViewChange();
+    }
+}
 
 export function updateCharacterName(newName) {
     characterData.characterName = newName || 'Adventurer';

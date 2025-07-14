@@ -178,6 +178,37 @@ body.light-mode .stat .stat__icon {
     background: linear-gradient(135deg, #ffd700, #f0ad4e);
 }
 
+/* Stat Page Filters */
+.stat-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.stat-filter-btn {
+    padding: 8px 16px;
+    background-color: var(--skill-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.stat-filter-btn:hover {
+    background-color: var(--skill-border);
+    color: var(--text-primary);
+}
+
+.stat-filter-btn--active {
+    background: var(--gradient-purple);
+    color: #fff;
+    border-color: var(--highlight-color);
+}
+
 
 /* Progress Bar & Tooltip */
 .tooltip-trigger {

@@ -26,7 +26,7 @@ export function setupEventListeners() {
             });
         }
     });
-    
+
     elements.moreBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         elements.moreDropdown.classList.toggle('hidden');
@@ -35,6 +35,15 @@ export function setupEventListeners() {
     window.addEventListener('click', (e) => {
         if (!elements.moreBtn.contains(e.target) && !elements.moreDropdown.contains(e.target)) {
             elements.moreDropdown.classList.add('hidden');
+        }
+    });
+
+    // --- Stat Page Filters ---
+    document.querySelector('.stat-filters').addEventListener('click', (e) => {
+        const target = e.target.closest('.stat-filter-btn');
+        if (target) {
+            const view = target.dataset.view;
+            state.setActiveStatView(view);
         }
     });
 
@@ -48,7 +57,7 @@ export function setupEventListeners() {
             navigateTo('stats');
         }
     });
-    
+
     // Auto-save character name on input blur
     elements.charNameInput.addEventListener('blur', () => {
         const newName = elements.charNameInput.value.trim();
@@ -104,43 +113,45 @@ export function setupEventListeners() {
             previewImg.src = e.target.value;
         }
     });
-    
+
+    // --- Tooltip Handling ---
     document.body.addEventListener('mouseover', e => {
-        const trigger = e.target.closest('[data-tooltip-type], #total-level-value');
+        const trigger = e.target.closest('[data-tooltip-type]');
         if (!trigger) return;
 
         let tooltipText = '';
+        const tooltipType = trigger.dataset.tooltipType;
+        const mainCard = trigger.closest('.total-level-card');
+        const skillCard = trigger.closest('.stat');
 
-        if (trigger.id === 'total-level-value') {
-            tooltipText = trigger.dataset.tooltipText;
-        } else {
-            const tooltipType = trigger.dataset.tooltipType;
-            if (tooltipType === 'progress-overall') {
+        if (mainCard) {
+            // Hovering over elements in the main 'Overall' or 'Total' card
+            if (tooltipType === 'hours') {
                 tooltipText = trigger.dataset.tooltipText;
-            } else {
-                const card = trigger.closest('.stat');
-                if (card) {
-                    const skillId = card.dataset.skillId;
-                    const skill = state.characterData.skills[skillId];
-                    if (skill) {
-                        switch (tooltipType) {
-                            case 'notes':
-                                tooltipText = skill.notes || 'No notes for this skill.';
-                                break;
-                            case 'hours':
-                                tooltipText = `${Math.round(skill.hours)} hours`;
-                                break;
-                            case 'progress':
-                                const level = getLevelFromHours(skill.hours, state.characterData.totalHoursGoal);
-                                const cache = state.characterData.totalHoursGoal === 1000 ? hoursCache1k : hoursCache10k;
-                                tooltipText = level >= MAX_LEVEL ? "Max Level!" : `${(cache[level + 1] - skill.hours).toFixed(1)} hours to Lvl ${level + 1}`;
-                                break;
-                        }
-                    }
+            } else if (tooltipType === 'progress-overall') {
+                tooltipText = trigger.dataset.tooltipText;
+            }
+        } else if (skillCard) {
+            // Hovering over elements in a normal skill card
+            const skillId = skillCard.dataset.skillId;
+            const skill = state.characterData.skills[skillId];
+            if (skill) {
+                switch (tooltipType) {
+                    case 'notes':
+                        tooltipText = skill.notes || 'No notes for this skill.';
+                        break;
+                    case 'hours':
+                        tooltipText = `${Math.round(skill.hours)} hours`;
+                        break;
+                    case 'progress':
+                        const level = getLevelFromHours(skill.hours, state.characterData.totalHoursGoal);
+                        const cache = state.characterData.totalHoursGoal === 1000 ? hoursCache1k : hoursCache10k;
+                        tooltipText = level >= MAX_LEVEL ? "Max Level!" : `${(cache[level + 1] - skill.hours).toFixed(1)} hours to Lvl ${level + 1}`;
+                        break;
                 }
             }
         }
-        
+
         if (tooltipText) {
             elements.tooltip.textContent = tooltipText;
             elements.tooltip.classList.remove('hidden');
@@ -154,11 +165,12 @@ export function setupEventListeners() {
     });
 
     document.body.addEventListener('mouseout', e => {
-        if (e.target.closest('[data-tooltip-type], #total-level-value')) {
+        if (e.target.closest('[data-tooltip-type]')) {
             elements.tooltip.classList.add('hidden');
         }
     });
 
+    // --- File Operations ---
     elements.saveToFileBtn.addEventListener('click', () => {
         const dataStr = JSON.stringify(state.characterData, null, 2);
         const blob = new Blob([dataStr], { type: "application/json" });
@@ -189,6 +201,7 @@ export function setupEventListeners() {
         e.target.value = null;
     });
 
+    // --- Toggles & Selects ---
     elements.hardModeToggle.addEventListener('change', (e) => {
         state.setHardMode(e.target.checked);
     });

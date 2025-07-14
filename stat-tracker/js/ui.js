@@ -108,15 +108,23 @@ export function buildUI() {
     elements.hardModeToggle.checked = characterData.totalHoursGoal === 10000;
     elements.themeToggle.checked = characterData.theme === 'dark';
 
-    // Create the Overall Card
-    const overallCardHTML = createStatCard({
-        id: 'overall-card',
-        isOverall: true,
-        title: 'Overall',
-        icon: 'https://img.icons8.com/ios-filled/50/ffffff/star.png',
-        level: 0
+    // Update filter button active states
+    document.querySelectorAll('.stat-filter-btn').forEach(btn => {
+        btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeStatView);
     });
-    elements.statGrid.insertAdjacentHTML('beforeend', overallCardHTML);
+
+    // Create the main card based on the active view
+    const mainCardTitle = characterData.activeStatView === 'total' ? 'Total' : 'Overall';
+    const mainCardSubText = characterData.activeStatView === 'total' ? 'Total Level' : 'Overall Level';
+    const mainCardHTML = createStatCard({
+        id: 'overall-card', // ID remains the same for simplicity
+        isOverall: true,
+        title: mainCardTitle,
+        icon: 'https://img.icons8.com/ios-filled/50/ffffff/star.png',
+        level: 0,
+        subText: mainCardSubText
+    });
+    elements.statGrid.insertAdjacentHTML('beforeend', mainCardHTML);
 
 
     // Create Skill Cards and Edit Boxes
@@ -168,19 +176,32 @@ export function updateAllStatsDisplay() {
         }
     });
 
-    const averageLevel = numberOfSkills > 0 ? totalLevelSum / numberOfSkills : 0;
-    const overallLevel = Math.floor(averageLevel);
+    const mainCard = document.getElementById('overall-card');
+    if (mainCard) {
+        const levelValueEl = mainCard.querySelector('.stat__level-value');
+        levelValueEl.dataset.tooltipText = `${Math.round(totalHours)} Total Hours`;
 
-    const overallCard = document.getElementById('overall-card');
-    if (overallCard) {
-        overallCard.querySelector('.stat__level-value').textContent = overallLevel;
-        overallCard.dataset.tooltipText = `${Math.round(totalHours)} Total Hours`;
-        const nextOverallLevel = overallLevel + 1;
-        const requiredForNext = nextOverallLevel * numberOfSkills;
-        const levelsNeeded = requiredForNext - totalLevelSum;
-        const progressPercentage = ((averageLevel - overallLevel) * 100);
-        overallCard.querySelector('.stat__progress').style.width = `${progressPercentage}%`;
-        overallCard.querySelector('.stat__progress-bar').dataset.tooltipText = `${levelsNeeded.toFixed(0)} more total levels for Lvl ${nextOverallLevel}`;
+        if (characterData.activeStatView === 'total') {
+            levelValueEl.textContent = Math.floor(totalLevelSum);
+            mainCard.querySelector('.stat__progress').style.width = '100%';
+            mainCard.querySelector('.stat__progress-bar').dataset.tooltipText = `${Math.round(totalHours)} Total Hours`;
+            mainCard.querySelector('.stat__name').textContent = 'Total';
+            mainCard.querySelector('.overall-label-badge').textContent = 'Total Level';
+
+        } else { // 'overall' view
+            const averageLevel = numberOfSkills > 0 ? totalLevelSum / numberOfSkills : 0;
+            const overallLevel = Math.floor(averageLevel);
+            const nextOverallLevel = overallLevel + 1;
+            const requiredForNext = nextOverallLevel * numberOfSkills;
+            const levelsNeeded = requiredForNext - totalLevelSum;
+            const progressPercentage = ((averageLevel - overallLevel) * 100);
+            
+            levelValueEl.textContent = overallLevel;
+            mainCard.querySelector('.stat__progress').style.width = `${progressPercentage}%`;
+            mainCard.querySelector('.stat__progress-bar').dataset.tooltipText = `${levelsNeeded.toFixed(0)} more total levels for Lvl ${nextOverallLevel}`;
+            mainCard.querySelector('.stat__name').textContent = 'Overall';
+            mainCard.querySelector('.overall-label-badge').textContent = 'Overall Level';
+        }
     }
 
     if (skillChart && elements.skillChartCanvas.offsetParent !== null) {

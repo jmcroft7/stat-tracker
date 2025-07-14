@@ -19,6 +19,12 @@ function initializeApp() {
         console.log('Structure updated, rebuilding UI...');
         buildUI();
     });
+    
+    // Listen for view changes on the stats page
+    window.addEventListener('view-changed', () => {
+        console.log('View changed, rebuilding UI...');
+        buildUI();
+    });
 }
 
 window.addEventListener('load', initializeApp);
