@@ -143,7 +143,6 @@ body.light-mode .stat .card-header img {
     font-size: 1em;
     font-weight: 600;
     color: var(--accent-color);
-    /* text-align: left; is no longer needed here */
 }
 
 .card-sub-value {
@@ -209,21 +208,25 @@ body.light-mode .stat .card-header img {
 /* Skill Editing */
 .skill-edit-box {
     background-color: var(--skill-bg);
-    background-image: repeating-linear-gradient( -45deg, transparent, transparent 4px, var(--texture-line-color) 4px, var(--texture-line-color) 8px );
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 8px;
-    border: 2px solid var(--skill-border);
-    box-shadow: 4px 4px 0px 0px var(--black-shadow);
-    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    border: 1px solid var(--skill-border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: box-shadow 0.2s;
 }
 .skill-edit-box:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px 0px var(--black-shadow);
-    border-color: var(--highlight-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
-.edit-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.edit-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
 
 .editable-header {
     background: transparent;
@@ -259,11 +262,24 @@ body.light-mode .stat .card-header img {
     cursor: pointer;
     margin-left: 5px;
     border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+}
+.edit-box-controls button:hover {
+    background-color: var(--skill-border);
 }
 .reorder-btn { font-family: sans-serif; }
 .reorder-btn:disabled { opacity: 0.2; cursor: not-allowed; }
-.delete-skill-btn { border-color: var(--danger-color); }
-.delete-skill-btn:hover { background: var(--danger-color); color: #fff; }
+
+.edit-box-controls .delete-skill-btn {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    color: #fff;
+}
+.edit-box-controls .delete-skill-btn:hover {
+    background-color: var(--danger-color);
+    opacity: 0.8;
+}
+
 .edit-box-controls .toggle-minimize-btn {
     border-color: var(--warning-color); background-color: var(--warning-color); color: #000;
 }
@@ -272,12 +288,22 @@ body.light-mode .stat .card-header img {
 }
 .toggle-minimize-btn:hover { opacity: 0.8; }
 .skill-edit-box.collapsed .edit-box-content { display: none; }
-#add-hours-btn, #add-skill-btn { background-color: var(--success-color); }
-.edit-page-actions .nav-button { width: auto; flex-grow: 1; }
-#save-edits-btn {
-    background-color: var(--warning-color);
-    color: #000;
+
+/* Action Button Colors */
+#add-hours-btn, #add-skill-btn {
+    background: var(--gradient-purple);
 }
+
+#save-edits-btn {
+    background: #6c757d;
+    color: #fff;
+}
+
+.edit-page-actions .nav-button {
+    width: auto;
+    flex-grow: 1;
+}
+
 
 .icon-select-wrapper { display: flex; align-items: center; gap: 10px; }
 .icon-select-wrapper select { flex-grow: 1; }

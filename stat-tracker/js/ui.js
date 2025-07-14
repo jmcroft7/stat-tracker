@@ -1,4 +1,4 @@
-import { MAX_LEVEL, ICON_LIBRARY } from './config.js';
+import { MAX_LEVEL, ICON_LIBRARY, SKILL_CLASSES } from './config.js';
 import { elements } from './elements.js';
 import { characterData } from './state.js';
 
@@ -52,7 +52,10 @@ export function buildChart() {
     const labels = characterData.skillOrder.map(id => characterData.skills[id].displayName);
     const data = characterData.skillOrder.map(id => getLevelFromHours(characterData.skills[id].hours, characterData.totalHoursGoal));
 
-    const maxLevel = Math.max(...data, 10);
+    let maxLevel = Math.max(...data);
+    if (maxLevel <= 1) {
+        maxLevel = 10;
+    }
 
     skillChart = new Chart(ctx, {
         type: 'radar',
@@ -134,7 +137,6 @@ export function buildUI() {
         const skill = characterData.skills[skillId];
         if (!skill) return;
 
-        // The change is in this template literal
         elements.statGrid.innerHTML += `
             <div class="stat" data-skill-id="${skillId}">
                 <div class="card-header">
@@ -154,6 +156,8 @@ export function buildUI() {
         elements.skillSelect.innerHTML += `<option value="${skillId}">${skill.displayName}</option>`;
 
         const iconOptions = ICON_LIBRARY.map(icon => `<option value="${icon.url}" ${skill.icon === icon.url ? 'selected' : ''}>${icon.name}</option>`).join('');
+        const classOptions = SKILL_CLASSES.map(c => `<option value="${c}" ${skill.class === c ? 'selected' : ''}>${c}</option>`).join('');
+
         elements.editSkillsContainer.innerHTML += `
             <div class="skill-edit-box collapsed" data-skill-id="${skillId}">
                 <div class="edit-box-header">
@@ -166,7 +170,21 @@ export function buildUI() {
                     </div>
                 </div>
                 <div class="edit-box-content">
-                    // ... content ...
+                    <div class="form-group">
+                        <label>Icon:</label>
+                        <div class="icon-select-wrapper">
+                            <select class="edit-icon-select">${iconOptions}</select>
+                            <img src="${skill.icon}" class="icon-preview" alt="Icon preview">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Class:</label>
+                        <select class="edit-class">${classOptions}</select>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes:</label>
+                        <textarea class="edit-notes">${skill.notes || ''}</textarea>
+                    </div>
                 </div>
             </div>`;
     });

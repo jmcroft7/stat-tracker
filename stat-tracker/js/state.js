@@ -1,12 +1,12 @@
-import { ICON_LIBRARY } from './config.js';
+import { ICON_LIBRARY, SKILL_CLASSES } from './config.js';
 
 export let characterData = {};
 
 export function getDefaultData() {
     const defaultSkills = {
-        'skill1': { displayName: 'Project', icon: ICON_LIBRARY.find(i => i.name === 'Checklist').url, hours: 0, notes: '' },
-        'skill2': { displayName: 'Learning', icon: ICON_LIBRARY.find(i => i.name === 'Book').url, hours: 0, notes: '' },
-        'skill3': { displayName: 'Exercise', icon: ICON_LIBRARY.find(i => i.name === 'Running').url, hours: 0, notes: '' },
+        'skill1': { displayName: 'Project', icon: ICON_LIBRARY.find(i => i.name === 'Checklist').url, hours: 0, notes: '', class: 'Artisan' },
+        'skill2': { displayName: 'Learning', icon: ICON_LIBRARY.find(i => i.name === 'Book').url, hours: 0, notes: '', class: 'Intellect' },
+        'skill3': { displayName: 'Exercise', icon: ICON_LIBRARY.find(i => i.name === 'Running').url, hours: 0, notes: '', class: 'Strength' },
     };
     return {
         characterName: 'Adventurer',
@@ -33,6 +33,9 @@ export function loadData() {
         for (const skillId in parsedData.skills) {
             if (parsedData.skills[skillId].notes === undefined) {
                 parsedData.skills[skillId].notes = '';
+            }
+            if (parsedData.skills[skillId].class === undefined || !SKILL_CLASSES.includes(parsedData.skills[skillId].class)) {
+                parsedData.skills[skillId].class = SKILL_CLASSES[0];
             }
         }
         characterData = parsedData;

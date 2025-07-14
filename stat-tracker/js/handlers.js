@@ -5,7 +5,7 @@ import {
     applyTheme, buildRecentActivityPage, getLevelFromHours,
     hoursCache1k, hoursCache10k, buildChart
 } from './ui.js';
-import { ICON_LIBRARY, MAX_LEVEL } from './config.js';
+import { ICON_LIBRARY, MAX_LEVEL, SKILL_CLASSES } from './config.js';
 
 export function setupEventListeners() {
     Object.keys(elements.nav).forEach(key => {
@@ -50,6 +50,7 @@ export function setupEventListeners() {
             const skillId = box.dataset.skillId;
             characterData.skills[skillId].displayName = box.querySelector('.edit-display-name').value;
             characterData.skills[skillId].icon = box.querySelector('.edit-icon-select').value;
+            characterData.skills[skillId].class = box.querySelector('.edit-class').value;
             characterData.skills[skillId].notes = box.querySelector('.edit-notes').value;
         });
         saveData();
@@ -59,7 +60,7 @@ export function setupEventListeners() {
 
     elements.addSkillBtn.addEventListener('click', () => {
         const newId = `skill${Date.now()}`;
-        characterData.skills[newId] = { displayName: 'New Skill', icon: ICON_LIBRARY.find(i => i.name === 'Plus').url, hours: 0, notes: '' };
+        characterData.skills[newId] = { displayName: 'New Skill', icon: ICON_LIBRARY.find(i => i.name === 'Plus').url, hours: 0, notes: '', class: SKILL_CLASSES[0] };
         characterData.skillOrder.push(newId);
         saveData();
         buildUI();

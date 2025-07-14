@@ -1,5 +1,16 @@
 export const MAX_LEVEL = 99;
 
+export const SKILL_CLASSES = [
+    'Work',
+    'Home life',
+    'Finance',
+    'Health',
+    'Hobbies',
+    'Relationships',
+    'Personal Growth',
+    'Education',
+];
+
 export const ICON_LIBRARY = [
     { name: 'Anvil', url: 'https://img.icons8.com/ios-filled/50/ffffff/anvil.png' }, { name: 'Book', url: 'https://img.icons8.com/ios-filled/50/ffffff/book.png' },
     { name: 'Bow', url: 'https://img.icons8.com/ios-filled/50/ffffff/archers-bow.png' }, { name: 'Brain', url: 'https://img.icons8.com/ios-filled/50/ffffff/brain.png' },
