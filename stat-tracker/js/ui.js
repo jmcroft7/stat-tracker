@@ -129,7 +129,10 @@ export function buildUI() {
             <div class="card-level-container">
                 <div id="total-level-value" class="card-level-value">0</div>
             </div>
-            <div class="card-sub-value">Total Level</div>
+            <div class="card-sub-value">Overall Level</div>
+            <div class="card-progress-bar" data-tooltip-type="progress-overall">
+                <div class="progress"></div>
+            </div>
         </div>
     `;
 
@@ -148,6 +151,7 @@ export function buildUI() {
                     <div class="card-level-value" data-tooltip-type="hours">0</div>
                     <div class="skill-rank"></div>
                 </div>
+                <div class="skill-class-badge"></div>
                 <div class="card-progress-bar" data-tooltip-type="progress">
                     <div class="progress"></div>
                 </div>
@@ -192,34 +196,60 @@ export function buildUI() {
 }
 
 export function updateAllStatsDisplay() {
-    let totalLevel = 0;
+    let totalLevelSum = 0;
     let totalHours = 0;
     const goal = characterData.totalHoursGoal;
     const cache = goal === 1000 ? hoursCache1k : hoursCache10k;
+    const numberOfSkills = characterData.skillOrder.length;
 
     characterData.skillOrder.forEach(skillId => {
         const skill = characterData.skills[skillId];
         if (!skill) return;
         const level = getLevelFromHours(skill.hours, goal);
-        totalLevel += level;
+        totalLevelSum += level;
         totalHours += skill.hours;
 
         const statElement = document.querySelector(`.stat[data-skill-id="${skillId}"]`);
         if (statElement) {
             statElement.querySelector('.card-level-value').textContent = level;
-            statElement.querySelector('.skill-rank').textContent = `(${getRankFromHours(skill.hours)})`;
+            statElement.querySelector('.skill-rank').textContent = getRankFromHours(skill.hours);
             
+            const classBadge = statElement.querySelector('.skill-class-badge');
+            classBadge.textContent = skill.class;
+            classBadge.className = `skill-class-badge ${skill.class?.toLowerCase()}`;
+
             const hoursForNextLevel = cache[level + 1] || cache[MAX_LEVEL];
             const progressPercentage = level >= MAX_LEVEL ? 100 : ((skill.hours - cache[level]) / (hoursForNextLevel - cache[level])) * 100;
             statElement.querySelector('.progress').style.width = `${progressPercentage}%`;
         }
     });
 
+    const averageLevel = numberOfSkills > 0 ? totalLevelSum / numberOfSkills : 0;
+    const overallLevel = Math.floor(averageLevel);
+
     const totalLevelCard = document.getElementById('total-level-card');
     if (totalLevelCard) {
         const totalLevelValueElement = totalLevelCard.querySelector('#total-level-value');
-        totalLevelValueElement.textContent = totalLevel;
+        totalLevelValueElement.textContent = overallLevel;
         totalLevelValueElement.dataset.tooltipText = `${Math.round(totalHours)} Total Hours`;
+
+        const progressBarContainer = totalLevelCard.querySelector('.card-progress-bar');
+        const nextOverallLevel = overallLevel + 1;
+        const requiredForCurrent = overallLevel * numberOfSkills;
+        const requiredForNext = nextOverallLevel * numberOfSkills;
+        const totalSpan = requiredForNext - requiredForCurrent;
+
+        if (totalSpan > 0) {
+            const currentProgressInSpan = totalLevelSum - requiredForCurrent;
+            const progressPercentage = (currentProgressInSpan / totalSpan) * 100;
+            progressBarContainer.querySelector('.progress').style.width = `${progressPercentage}%`;
+            
+            const levelsNeeded = requiredForNext - totalLevelSum;
+            progressBarContainer.dataset.tooltipText = `${levelsNeeded} more total levels for Lvl ${nextOverallLevel}`;
+        } else {
+            progressBarContainer.querySelector('.progress').style.width = '100%';
+            progressBarContainer.dataset.tooltipText = `Max progress for Overall ${overallLevel}!`;
+        }
     }
 
     if (skillChart && elements.skillChartCanvas.offsetParent !== null) {

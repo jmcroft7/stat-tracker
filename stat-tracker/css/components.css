@@ -126,9 +126,9 @@ body.light-mode .stat .card-header img {
 
 .card-level-container {
     display: flex;
-    flex-direction: column; /* Stack items vertically */
-    align-items: flex-start; /* Align them to the left */
-    gap: 2px; /* Adjust the space between level and rank */
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
 }
 
 .card-level-value {
@@ -140,9 +140,9 @@ body.light-mode .stat .card-header img {
 }
 
 .skill-rank {
-    font-size: 1em;
+    font-size: 1.2em;
     font-weight: 600;
-    color: var(--accent-color);
+    color: var(--text-secondary);
 }
 
 .card-sub-value {
@@ -163,6 +163,7 @@ body.light-mode .stat .card-header img {
     border-radius: 3px;
     overflow: hidden;
     cursor: help;
+    margin-top: 4px;
 }
 .card-progress-bar .progress {
     width: 0%;
@@ -171,8 +172,9 @@ body.light-mode .stat .card-header img {
     background: var(--gradient-purple);
     transition: width 0.3s ease-in-out;
 }
-.total-level-card .card-progress-bar {
-    display: none;
+
+.total-level-card .card-progress-bar .progress {
+    background: linear-gradient(135deg, #ffd700, #f0ad4e);
 }
 
 
@@ -386,3 +388,45 @@ body.light-mode .summary-item img {
 }
 .summary-skill-name { flex-grow: 1; font-size: 1.1em; font-weight: 600; color: var(--text-primary); }
 .summary-hours { font-size: 1.2em; font-weight: 700; color: var(--accent-color); }
+
+/* Skill Class Badge Styles */
+.skill-class-badge {
+    font-size: 0.8em;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 10px;
+    color: #fff;
+    background: var(--gradient-purple);
+    text-align: center;
+    width: fit-content;
+    margin-top: 4px;
+    text-transform: none;
+}
+
+/* Level Display Toggle */
+.level-display-toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    background-color: var(--skill-bg);
+    border-radius: 8px;
+    padding: 4px;
+    border: 1px solid var(--border-color);
+}
+.toggle-button {
+    flex-grow: 1;
+    padding: 8px 10px;
+    border: none;
+    background-color: transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 6px;
+    font-size: 0.9em;
+}
+.toggle-button.active {
+    background: var(--gradient-purple);
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
