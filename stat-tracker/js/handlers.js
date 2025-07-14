@@ -52,7 +52,7 @@ export function setupEventListeners() {
             const skillId = box.dataset.skillId;
             edits.skills.push({
                 id: skillId,
-                displayName: box.querySelector('.edit-display-name').value,
+                displayName: box.querySelector('.skill-edit-box__display-name').value,
                 icon: box.querySelector('.edit-icon-select').value,
                 skillClass: box.querySelector('.edit-class').value,
                 notes: box.querySelector('.edit-notes').value
@@ -67,21 +67,21 @@ export function setupEventListeners() {
     });
 
     elements.editSkillsContainer.addEventListener('click', e => {
-        const button = e.target.closest('button');
+        const button = e.target.closest('.skill-edit-box__control-btn');
         if (!button) return;
         const box = button.closest('.skill-edit-box');
         if (!box) return;
         const skillId = box.dataset.skillId;
 
-        if (button.classList.contains('delete-skill-btn')) {
+        if (button.classList.contains('skill-edit-box__control-btn--delete')) {
             const skillName = state.characterData.skills[skillId].displayName;
             if (confirm(`Are you sure you want to delete "${skillName}"?`)) {
                 state.deleteSkill(skillId);
             }
-        } else if (button.classList.contains('toggle-minimize-btn')) {
-            box.classList.toggle('collapsed');
-            button.textContent = box.classList.contains('collapsed') ? '+' : '-';
-        } else if (button.classList.contains('reorder-btn')) {
+        } else if (button.classList.contains('skill-edit-box__control-btn--minimize')) {
+            box.classList.toggle('skill-edit-box--collapsed');
+            button.textContent = box.classList.contains('skill-edit-box--collapsed') ? '+' : '-';
+        } else if (button.classList.contains('skill-edit-box__control-btn--reorder')) {
             const dir = button.dataset.dir;
             state.reorderSkill(skillId, dir);
         }

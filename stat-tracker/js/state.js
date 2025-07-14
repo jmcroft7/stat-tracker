@@ -2,15 +2,19 @@ import { ICON_LIBRARY, SKILL_CLASSES } from './config.js';
 
 export let characterData = {};
 
-function dispatchStateUpdate() {
-    window.dispatchEvent(new CustomEvent('state-updated'));
+function dispatchHoursUpdate() {
+    window.dispatchEvent(new CustomEvent('hours-updated'));
+}
+
+function dispatchStructureUpdate() {
+    window.dispatchEvent(new CustomEvent('structure-updated'));
 }
 
 export function getDefaultData() {
     const defaultSkills = {
-        'skill1': { displayName: 'Project', icon: ICON_LIBRARY.find(i => i.name === 'Checklist').url, hours: 0, notes: '', class: 'Work' },
-        'skill2': { displayName: 'Learning', icon: ICON_LIBRARY.find(i => i.name === 'Book').url, hours: 0, notes: '', class: 'Education' },
-        'skill3': { displayName: 'Exercise', icon: ICON_LIBRARY.find(i => i.name === 'Running').url, hours: 0, notes: '', class: 'Health' },
+        'skill1': { displayName: 'Project', icon: 'https://img.icons8.com/ios-filled/50/ffffff/checklist.png', hours: 0, notes: '', class: 'Work' },
+        'skill2': { displayName: 'Learning', icon: 'https://img.icons8.com/ios-filled/50/ffffff/book.png', hours: 0, notes: '', class: 'Education' },
+        'skill3': { displayName: 'Exercise', icon: 'https://img.icons8.com/ios-filled/50/ffffff/running.png', hours: 0, notes: '', class: 'Health' },
     };
     return {
         characterName: 'Adventurer',
@@ -55,16 +59,16 @@ export function updateSkillHours(skillId, hoursToAdd) {
         characterData.skills[skillId].hours += hoursToAdd;
         characterData.hourLogs.push({ date: new Date().toISOString(), skillId: skillId, hours: hoursToAdd });
         saveData();
-        dispatchStateUpdate();
+        dispatchHoursUpdate();
     }
 }
 
 export function addSkill() {
     const newId = `skill${Date.now()}`;
-    characterData.skills[newId] = { displayName: 'New Skill', icon: ICON_LIBRARY.find(i => i.name === 'Plus').url, hours: 0, notes: '', class: SKILL_CLASSES[0] };
+    characterData.skills[newId] = { displayName: 'New Skill', icon: 'https://img.icons8.com/ios/50/ffffff/plus-math.png', hours: 0, notes: '', class: SKILL_CLASSES[0] };
     characterData.skillOrder.push(newId);
     saveData();
-    dispatchStateUpdate();
+    dispatchStructureUpdate();
 }
 
 export function deleteSkill(skillId) {
@@ -72,7 +76,7 @@ export function deleteSkill(skillId) {
         delete characterData.skills[skillId];
         characterData.skillOrder = characterData.skillOrder.filter(id => id !== skillId);
         saveData();
-        dispatchStateUpdate();
+        dispatchStructureUpdate();
     }
 }
 
@@ -84,7 +88,7 @@ export function reorderSkill(skillId, direction) {
         [characterData.skillOrder[index], characterData.skillOrder[index + 1]] = [characterData.skillOrder[index + 1], characterData.skillOrder[index]];
     }
     saveData();
-    dispatchStateUpdate();
+    dispatchStructureUpdate();
 }
 
 export function saveAllSkillEdits(edits) {
@@ -99,23 +103,22 @@ export function saveAllSkillEdits(edits) {
         }
     });
     saveData();
-    dispatchStateUpdate();
+    dispatchStructureUpdate();
 }
 
 export function setHardMode(isHardMode) {
     characterData.totalHoursGoal = isHardMode ? 10000 : 1000;
     saveData();
-    dispatchStateUpdate();
+    dispatchStructureUpdate();
 }
 
 export function setTheme(theme) {
     characterData.theme = theme;
     saveData();
-    // Theme updates are visual only, no need to dispatch a full state update
 }
 
 export function loadFromFile(data) {
     Object.assign(characterData, data);
     saveData();
-    dispatchStateUpdate();
+    dispatchStructureUpdate();
 }

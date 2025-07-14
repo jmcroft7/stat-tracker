@@ -1,5 +1,5 @@
 import { loadData } from './state.js';
-import { applyTheme, buildUI } from './ui.js';
+import { applyTheme, buildUI, updateAllStatsDisplay } from './ui.js';
 import { setupEventListeners } from './handlers.js';
 
 function initializeApp() {
@@ -8,9 +8,15 @@ function initializeApp() {
     buildUI();
     setupEventListeners();
 
-    // Listen for state changes and update the UI accordingly
-    window.addEventListener('state-updated', () => {
-        console.log('State updated, rebuilding UI...');
+    // Listen for lightweight hour/level updates
+    window.addEventListener('hours-updated', () => {
+        console.log('Hours updated, refreshing stats...');
+        updateAllStatsDisplay();
+    });
+
+    // Listen for major structural changes that require a full rebuild
+    window.addEventListener('structure-updated', () => {
+        console.log('Structure updated, rebuilding UI...');
         buildUI();
     });
 }

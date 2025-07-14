@@ -1,6 +1,8 @@
-import { MAX_LEVEL, ICON_LIBRARY, SKILL_CLASSES } from './config.js';
+import { MAX_LEVEL } from './config.js';
 import { elements } from './elements.js';
 import { characterData } from './state.js';
+import { createStatCard } from './components/StatCard.js';
+import { createSkillEditBox } from './components/SkillEditBox.js';
 
 let skillChart = null;
 
@@ -32,65 +34,6 @@ export function getRankFromHours(hours) {
     if (hours >= thresholds.Adept) return 'Adept';
     return 'Beginner';
 }
-
-// --- Component Factory ---
-
-function createStatCard(cardData) {
-    const { id, isOverall = false, title, icon, level, rank, class: skillClass } = cardData;
-
-    const cardTypeClass = isOverall ? 'total-level-card' : 'stat';
-    const subValueContent = isOverall
-        ? `<span class="overall-label-badge">Overall Level</span>`
-        : `<div class="skill-class-badge">${skillClass}</div>`;
-    const rankText = isOverall ? '' : `<div class="stat__rank">${rank}</div>`;
-    const tooltipType = isOverall ? 'progress-overall' : 'progress';
-
-    return `
-        <div id="${id}" class="${cardTypeClass}" data-skill-id="${id}">
-            <div class="stat__header">
-                <img src="${icon}" class="stat__icon" alt="${title} Icon">
-                <span class="stat__name">${title}</span>
-                ${!isOverall ? '<span class="tooltip-trigger" data-tooltip-type="notes">?</span>' : ''}
-            </div>
-            <div class="stat__level-container">
-                <div class="stat__level-value" data-tooltip-type="hours">${level}</div>
-                ${rankText}
-            </div>
-            <div class="stat__sub-value">${subValueContent}</div>
-            <div class="stat__progress-bar" data-tooltip-type="${tooltipType}">
-                <div class="stat__progress"></div>
-            </div>
-        </div>
-    `;
-}
-
-function createSkillEditBox(skill, skillId, index, totalSkills) {
-    const box = document.createElement('div');
-    box.className = 'skill-edit-box skill-edit-box--collapsed';
-    box.dataset.skillId = skillId;
-
-    const iconOptions = ICON_LIBRARY.map(icon => `<option value="${icon.url}" ${skill.icon === icon.url ? 'selected' : ''}>${icon.name}</option>`).join('');
-    const classOptions = SKILL_CLASSES.map(c => `<option value="${c}" ${skill.class === c ? 'selected' : ''}>${c}</option>`).join('');
-
-    box.innerHTML = `
-        <div class="skill-edit-box__header">
-            <input type="text" class="skill-edit-box__display-name" value="${skill.displayName}">
-            <div class="skill-edit-box__controls">
-                <button class="skill-edit-box__control-btn skill-edit-box__control-btn--reorder" data-dir="up" title="Move Up" ${index === 0 ? 'disabled' : ''}>&uarr;</button>
-                <button class="skill-edit-box__control-btn skill-edit-box__control-btn--reorder" data-dir="down" title="Move Down" ${index === totalSkills - 1 ? 'disabled' : ''}>&darr;</button>
-                <button class="skill-edit-box__control-btn skill-edit-box__control-btn--minimize" title="Minimize/Expand">+</button>
-                <button class="skill-edit-box__control-btn skill-edit-box__control-btn--delete" title="Delete Skill">&times;</button>
-            </div>
-        </div>
-        <div class="skill-edit-box__content">
-            <div class="form-group"><label>Icon:</label><div class="icon-select-wrapper"><select class="edit-icon-select">${iconOptions}</select><img src="${skill.icon}" class="icon-preview" alt="Icon preview"></div></div>
-            <div class="form-group"><label>Class:</label><select class="edit-class">${classOptions}</select></div>
-            <div class="form-group"><label>Notes:</label><textarea class="edit-notes">${skill.notes || ''}</textarea></div>
-        </div>
-    `;
-    return box;
-}
-
 
 // --- UI Building Functions ---
 
@@ -165,20 +108,22 @@ export function buildUI() {
     elements.themeToggle.checked = characterData.theme === 'dark';
 
     // Create the Overall Card
-    elements.statGrid.innerHTML += createStatCard({
+    const overallCardHTML = createStatCard({
         id: 'overall-card',
         isOverall: true,
         title: 'Overall',
         icon: 'https://img.icons8.com/ios-filled/50/ffffff/star.png',
         level: 0
     });
+    elements.statGrid.insertAdjacentHTML('beforeend', overallCardHTML);
+
 
     // Create Skill Cards and Edit Boxes
     characterData.skillOrder.forEach((skillId, index) => {
         const skill = characterData.skills[skillId];
         if (!skill) return;
 
-        elements.statGrid.innerHTML += createStatCard({
+        const statCardHTML = createStatCard({
             id: skillId,
             title: skill.displayName,
             icon: skill.icon,
@@ -186,6 +131,8 @@ export function buildUI() {
             rank: 'Beginner',
             class: skill.class
         });
+        elements.statGrid.insertAdjacentHTML('beforeend', statCardHTML);
+
 
         elements.skillSelect.innerHTML += `<option value="${skillId}">${skill.displayName}</option>`;
         
@@ -299,7 +246,7 @@ export function buildWeeklySummaryView() {
         return logDate >= startDate && logDate <= endDate;
     });
 
-    const header = `Week of ${startDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} - ${endDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    const header = `Week of ${startDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} - ${endDate.toLocaleDate-String(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`;
     renderSummary(weeklyLogs, header, 'week');
 }
 
