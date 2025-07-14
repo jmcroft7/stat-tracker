@@ -23,10 +23,6 @@ nav {
     margin-bottom: 20px;
     color: var(--text-primary);
 }
-#character-name-header {
-    font-size: 2em;
-    font-weight: 600;
-}
 .stat-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
