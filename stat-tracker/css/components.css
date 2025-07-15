@@ -67,7 +67,7 @@
 .total-level-card .stat__header, .total-level-card .stat__level-value, .total-level-card .stat__sub-value {
     color: #fff;
 }
-.total-level-card .stat__icon {
+.total-level-card .stat__icon-img {
     filter: none !important;
 }
 .total-level-card:hover {
@@ -87,10 +87,7 @@
 body.dark-mode .stat .stat__header,
 body.dark-mode .stat .stat__level-value,
 body.dark-mode .stat .stat__sub-value {
-    color: #333; /* Dark text for light cards */
-}
-body.dark-mode .stat .stat__icon {
-    filter: invert(1); /* Invert icons to be visible on light background */
+    color: var(--text-primary);
 }
 body:not(.light-mode) .stat__progress-bar {
     background-color: #3e3155;
@@ -108,12 +105,16 @@ body:not(.light-mode) .stat__progress-bar {
     flex-grow: 1;
 }
 .stat__icon {
+    font-size: 20px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.stat__icon-img {
     width: 20px;
     height: 20px;
-}
-
-body.light-mode .stat .stat__icon {
-    filter: invert(1);
 }
 
 
@@ -336,10 +337,6 @@ body.light-mode .stat .stat__icon {
     flex-grow: 1;
 }
 
-
-.icon-select-wrapper { display: flex; align-items: center; gap: 10px; }
-.icon-select-wrapper select { flex-grow: 1; }
-.icon-preview { width: 32px; height: 32px; background-color: #000; border: 1px solid var(--skill-border); border-radius: 4px; }
 .file-controls button { font-size: 0.9em; flex-grow: 1; background-color: var(--skill-border); margin-top: 0;}
 
 /* Toggle Switch Styles */
@@ -412,9 +409,9 @@ input:checked + .slider:before {
     display: flex; align-items: center; background-color: var(--skill-bg);
     padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);
 }
-.summary-item img { width: 24px; height: 24px; margin-right: 12px; }
-body.light-mode .summary-item img {
-    filter: invert(1);
+.summary-icon {
+    font-size: 24px;
+    margin-right: 12px;
 }
 .summary-skill-name { flex-grow: 1; font-size: 1.1em; font-weight: 600; color: var(--text-primary); }
 .summary-hours { font-size: 1.2em; font-weight: 700; color: var(--accent-color); }
@@ -486,4 +483,75 @@ body.light-mode .summary-item img {
 }
 #toast-close-btn:hover {
     opacity: 1;
+}
+
+/* Searchable Dropdown */
+.searchable-dropdown {
+    position: relative;
+}
+
+.searchable-dropdown__search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.searchable-dropdown__icon-preview {
+    position: absolute;
+    right: 10px;
+    font-size: 1.2em;
+    pointer-events: none; /* Make it unclickable */
+}
+
+.searchable-dropdown__search {
+    padding-right: 35px !important; /* Make space for emoji */
+    font-size: 1em !important; /* Normalize font size */
+}
+
+.searchable-dropdown__list-container {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--skill-bg);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.searchable-dropdown.active .searchable-dropdown__list-container {
+    display: block;
+}
+
+.searchable-dropdown__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.searchable-dropdown__list li {
+    padding: 10px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background-color: var(--bg-color); /* Match other dropdowns */
+}
+
+.searchable-dropdown__list li:hover,
+.searchable-dropdown__list li.selected {
+    background-color: var(--skill-border);
+}
+
+.searchable-dropdown__emoji {
+    font-size: 1.2em;
+}
+
+.searchable-dropdown__name {
+    color: var(--text-primary);
 }

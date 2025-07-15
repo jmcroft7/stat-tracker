@@ -45,22 +45,18 @@ function hideToast() {
 export function showToast(message, type = 'success') {
     const { toastNotification, toastMessage, toastCloseBtn } = elements;
     
-    // Clear any existing timer
     if (toastTimeout) {
         clearTimeout(toastTimeout);
     }
 
-    // Set message and style
     toastMessage.textContent = message;
-    toastNotification.className = 'show'; // Reset classes and show
+    toastNotification.className = 'show'; 
     if (type === 'danger') {
         toastNotification.classList.add('danger');
     }
 
-    // Set auto-dismiss timer
-    toastTimeout = setTimeout(hideToast, 4000); // 4 seconds
+    toastTimeout = setTimeout(hideToast, 4000);
 
-    // Add click listener to close button
     toastCloseBtn.onclick = () => {
         clearTimeout(toastTimeout);
         hideToast();
@@ -80,7 +76,6 @@ export function buildChart() {
         skillChart.destroy();
     }
     
-    // Update button active states
     document.querySelectorAll('#graph-page-filters .stat-filter-btn').forEach(btn => {
         btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeGraphView);
     });
@@ -109,7 +104,7 @@ export function buildChart() {
         labels = Object.keys(classHours);
         data = Object.values(classHours).map(hours => getLevelFromHours(hours, goal));
 
-    } else { // Default to 'skill' view
+    } else { 
         labels = characterData.skillOrder.map(id => characterData.skills[id].displayName);
         data = characterData.skillOrder.map(id => getLevelFromHours(characterData.skills[id].hours, goal));
     }
@@ -165,16 +160,14 @@ export function buildUI() {
     elements.hardModeToggle.checked = characterData.totalHoursGoal === 10000;
     elements.themeToggle.checked = characterData.theme === 'dark';
 
-    // Update filter button active states
     document.querySelectorAll('#stats-page-filters .stat-filter-btn').forEach(btn => {
         btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeStatView);
     });
 
-    // Create the main card based on the active view
     const mainCardTitle = characterData.activeStatView === 'total' ? 'Total' : 'Overall';
     const mainCardSubText = characterData.activeStatView === 'total' ? 'Total Level' : 'Overall Level';
     const mainCardHTML = createStatCard({
-        id: 'overall-card', // ID remains the same for simplicity
+        id: 'overall-card',
         isOverall: true,
         title: mainCardTitle,
         icon: 'https://img.icons8.com/ios-filled/50/ffffff/star.png',
@@ -183,8 +176,6 @@ export function buildUI() {
     });
     elements.statGrid.insertAdjacentHTML('beforeend', mainCardHTML);
 
-
-    // Create Skill Cards and Edit Boxes
     characterData.skillOrder.forEach((skillId, index) => {
         const skill = characterData.skills[skillId];
         if (!skill) return;
@@ -198,9 +189,8 @@ export function buildUI() {
             class: skill.class
         });
         elements.statGrid.insertAdjacentHTML('beforeend', statCardHTML);
-
-
-        elements.skillSelect.innerHTML += `<option value="${skillId}">${skill.displayName}</option>`;
+        
+        elements.skillSelect.innerHTML += `<option value="${skillId}">${skill.icon} ${skill.displayName}</option>`;
 
         const skillEditBox = createSkillEditBox(skill, skillId, index, characterData.skillOrder.length);
         elements.editSkillsContainer.appendChild(skillEditBox);
@@ -253,7 +243,7 @@ export function updateAllStatsDisplay() {
             mainCard.querySelector('.stat__name').textContent = 'Total';
             mainCard.querySelector('.overall-label-badge').textContent = 'Total Level';
 
-        } else { // 'overall' view
+        } else { 
             const averageLevel = numberOfSkills > 0 ? totalLevelSum / numberOfSkills : 0;
             const overallLevel = Math.floor(averageLevel);
             const nextOverallLevel = overallLevel + 1;
@@ -275,15 +265,12 @@ export function updateAllStatsDisplay() {
 }
 
 export function navigateTo(pageKey) {
-    // Hide all pages
     Object.values(elements.pages).forEach(p => p.classList.add('hidden'));
 
-    // Show the target page
     if (elements.pages[pageKey]) {
         elements.pages[pageKey].classList.remove('hidden');
     }
 
-    // Update nav button active states
     document.querySelectorAll('.nav__button').forEach(b => b.classList.remove('nav__button--active'));
 
     const isDropdownItem = pageKey === 'about' || pageKey === 'settings';
@@ -326,7 +313,7 @@ function renderSummary(logs, headerText, timePeriod) {
             summaryList.innerHTML += `<div class="summary-item"><span class="summary-skill-name">${className}</span><span class="summary-hours">${hours.toFixed(1)} hrs</span></div>`;
         });
 
-    } else { // 'skill' view
+    } else { 
         const summary = logs.reduce((acc, log) => {
             if (!acc[log.skillId]) { acc[log.skillId] = 0; }
             acc[log.skillId] += log.hours;
@@ -336,7 +323,7 @@ function renderSummary(logs, headerText, timePeriod) {
         sortedSummary.forEach(item => {
             const skill = characterData.skills[item.skillId];
             if (skill) {
-                summaryList.innerHTML += `<div class="summary-item"><img src="${skill.icon}" alt="${skill.displayName} icon"><span class="summary-skill-name">${skill.displayName}</span><span class="summary-hours">${item.hours.toFixed(1)} hrs</span></div>`;
+                summaryList.innerHTML += `<div class="summary-item"><span class="summary-icon">${skill.icon}</span><span class="summary-skill-name">${skill.displayName}</span><span class="summary-hours">${item.hours.toFixed(1)} hrs</span></div>`;
             }
         });
     }
@@ -374,18 +361,16 @@ export function buildMonthlySummaryView() {
 }
 
 export function buildRecentActivityPage() {
-    // Update button active states
     document.querySelectorAll('#recent-page-filters .stat-filter-btn').forEach(btn => {
         btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeRecentView);
     });
 
-    // Set toggle state
     elements.recentViewToggle.checked = characterData.activeRecentSubView === 'class';
 
     const selectedView = characterData.activeRecentView;
     if (selectedView === 'monthly') {
         buildMonthlySummaryView();
-    } else { // Default to weekly
+    } else { 
         buildWeeklySummaryView();
     }
 }

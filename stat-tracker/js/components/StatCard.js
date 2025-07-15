@@ -10,11 +10,12 @@ export function createStatCard(cardData) {
 
     // For the main card, the level value tooltip should show total hours.
     const levelTooltipType = isOverall ? 'hours' : 'hours';
+    const iconContent = isOverall ? `<img src="${icon}" class="stat__icon-img" alt="Star Icon">` : `<span class="stat__icon">${icon}</span>`;
 
     return `
         <div id="${id}" class="${cardTypeClass}" data-skill-id="${id}">
             <div class="stat__header">
-                <img src="${icon}" class="stat__icon" alt="${title} Icon">
+                ${iconContent}
                 <span class="stat__name">${title}</span>
                 ${!isOverall ? '<span class="tooltip-trigger" data-tooltip-type="notes">?</span>' : ''}
             </div>

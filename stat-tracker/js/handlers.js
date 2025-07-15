@@ -28,23 +28,19 @@ export function setupEventListeners() {
                 const currentPageElement = document.querySelector('.page:not(.hidden)');
                 const currentPageKey = currentPageElement ? Object.keys(elements.pages).find(k => elements.pages[k] === currentPageElement) : null;
 
-                // Check for unsaved changes before navigating away from the skills page
                 if (currentPageKey === 'skills' && isSkillsPageDirty) {
                     if (!confirm('You have unsaved changes. Are you sure you want to discard them?')) {
-                        return; // Stop the navigation
+                        return;
                     }
                 }
-                // If we are leaving the page (by choice or after saving), reset the dirty flag
                 isSkillsPageDirty = false;
 
                 if (key === 'logHours') {
-                    // Use a small timeout to ensure the UI is ready before updating the hours display
                     setTimeout(() => updateSkillTotalHoursDisplay(elements.skillSelect.value), 0);
                 }
                 if (key === 'recent') buildRecentActivityPage();
                 if (key === 'dashboard') buildChart();
                 navigateTo(key);
-                // Close dropdown if a dropdown link was clicked
                 if (key === 'settings' || key === 'about') {
                     elements.moreDropdown.classList.add('hidden');
                 }
@@ -65,6 +61,12 @@ export function setupEventListeners() {
         if (!elements.moreBtn.contains(e.target) && !elements.moreDropdown.contains(e.target)) {
             elements.moreDropdown.classList.add('hidden');
         }
+        // Close any open searchable dropdowns
+        document.querySelectorAll('.searchable-dropdown.active').forEach(dropdown => {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
     });
 
     // --- Page-Specific Filters ---
@@ -109,12 +111,10 @@ export function setupEventListeners() {
             showToast(`${hoursToAdd} hours added to ${skillName}!`);
             
             elements.hoursInput.value = '';
-            // Update the display to show the new total
             updateSkillTotalHoursDisplay(skillId);
         }
     });
 
-    // Auto-save character name on input blur
     elements.charNameInput.addEventListener('blur', () => {
         const newName = elements.charNameInput.value.trim();
         if (newName && newName !== state.characterData.characterName) {
@@ -129,13 +129,13 @@ export function setupEventListeners() {
             edits.push({
                 id: skillId,
                 displayName: box.querySelector('.skill-edit-box__display-name').value,
-                icon: box.querySelector('.edit-icon-select').value,
+                icon: box.querySelector('.searchable-dropdown__search').dataset.icon,
                 skillClass: box.querySelector('.edit-class').value,
                 notes: box.querySelector('.edit-notes').value
             });
         });
         state.saveAllSkillEdits(edits);
-        isSkillsPageDirty = false; // Reset the flag after saving
+        isSkillsPageDirty = false;
         showToast("All changes saved!");
     });
 
@@ -144,15 +144,47 @@ export function setupEventListeners() {
         showToast("New skill added!");
     });
 
-    // Set dirty flag when any input on the skills page changes
-    elements.editSkillsContainer.addEventListener('input', () => {
-        isSkillsPageDirty = true;
+    elements.editSkillsContainer.addEventListener('input', (e) => {
+        if (!e.target.closest('.searchable-dropdown')) {
+            isSkillsPageDirty = true;
+        }
     });
 
     elements.editSkillsContainer.addEventListener('click', e => {
+        // Searchable Dropdown Logic
+        const dropdownSearch = e.target.closest('.searchable-dropdown__search');
+        if (dropdownSearch) {
+            const parentDropdown = dropdownSearch.closest('.searchable-dropdown');
+            parentDropdown.classList.add('active');
+            dropdownSearch.select();
+        }
+
+        const dropdownItem = e.target.closest('.searchable-dropdown__list li');
+        if (dropdownItem) {
+            const parentDropdown = dropdownItem.closest('.searchable-dropdown');
+            const searchInput = parentDropdown.querySelector('.searchable-dropdown__search');
+            const iconPreview = parentDropdown.querySelector('.searchable-dropdown__icon-preview');
+            const newIcon = dropdownItem.dataset.value;
+            const newName = dropdownItem.dataset.name;
+            
+            searchInput.value = newName;
+            searchInput.dataset.icon = newIcon;
+            iconPreview.textContent = newIcon;
+            isSkillsPageDirty = true;
+            
+            parentDropdown.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+            dropdownItem.classList.add('selected');
+            
+            parentDropdown.classList.remove('active');
+            e.stopPropagation();
+            return;
+        }
+
+
+        // Other controls
         const button = e.target.closest('.skill-edit-box__control-btn');
         if (!button) return;
-        isSkillsPageDirty = true; // Deleting or reordering also counts as a change
+        isSkillsPageDirty = true;
         const box = button.closest('.skill-edit-box');
         if (!box) return;
         const skillId = box.dataset.skillId;
@@ -171,12 +203,35 @@ export function setupEventListeners() {
             state.reorderSkill(skillId, dir);
         }
     });
+    
+    // Searchable dropdown filtering
+    elements.editSkillsContainer.addEventListener('keyup', e => {
+        const searchInput = e.target.closest('.searchable-dropdown__search');
+        if (searchInput) {
+            const filter = searchInput.value.toLowerCase();
+            const list = searchInput.closest('.searchable-dropdown').querySelector('.searchable-dropdown__list');
+            const items = list.getElementsByTagName('li');
+            const iconPreview = searchInput.parentElement.querySelector('.searchable-dropdown__icon-preview');
 
-    elements.editSkillsContainer.addEventListener('change', e => {
-        if (e.target.classList.contains('edit-icon-select')) {
-            const previewImg = e.target.closest('.icon-select-wrapper').querySelector('.icon-preview');
-            previewImg.src = e.target.value;
-            isSkillsPageDirty = true;
+            // Hide icon preview while searching
+            iconPreview.style.display = 'none';
+
+            for (let i = 0; i < items.length; i++) {
+                const name = items[i].querySelector('.searchable-dropdown__name').textContent;
+                if (name.toLowerCase().indexOf(filter) > -1) {
+                    items[i].style.display = "";
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
+        }
+    });
+
+    elements.editSkillsContainer.addEventListener('focusout', e => {
+        const searchInput = e.target.closest('.searchable-dropdown__search');
+        if(searchInput) {
+            const iconPreview = searchInput.parentElement.querySelector('.searchable-dropdown__icon-preview');
+            iconPreview.style.display = 'block'; // Show icon again
         }
     });
 
@@ -191,14 +246,12 @@ export function setupEventListeners() {
         const skillCard = trigger.closest('.stat');
 
         if (mainCard) {
-            // Hovering over elements in the main 'Overall' or 'Total' card
             if (tooltipType === 'hours') {
                 tooltipText = trigger.dataset.tooltipText;
             } else if (tooltipType === 'progress-overall') {
                 tooltipText = trigger.dataset.tooltipText;
             }
         } else if (skillCard) {
-            // Hovering over elements in a normal skill card
             const skillId = skillCard.dataset.skillId;
             const skill = state.characterData.skills[skillId];
             if (skill) {

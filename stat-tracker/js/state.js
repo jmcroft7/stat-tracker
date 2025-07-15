@@ -1,4 +1,4 @@
-import { ICON_LIBRARY, SKILL_CLASSES } from './config.js';
+import { EMOJI_ICONS, SKILL_CLASSES } from './config.js';
 
 export let characterData = {};
 
@@ -24,9 +24,9 @@ function dispatchGraphViewChange() {
 
 export function getDefaultData() {
     const defaultSkills = {
-        'skill1': { displayName: 'Project', icon: 'https://img.icons8.com/ios-filled/50/ffffff/checklist.png', hours: 0, notes: '', class: '💼 Work' },
-        'skill2': { displayName: 'Learning', icon: 'https://img.icons8.com/ios-filled/50/ffffff/book.png', hours: 0, notes: '', class: '🎓 Education' },
-        'skill3': { displayName: 'Exercise', icon: 'https://img.icons8.com/ios-filled/50/ffffff/running.png', hours: 0, notes: '', class: '❤️ Health' },
+        'skill1': { displayName: 'Project', icon: EMOJI_ICONS[0].emoji, hours: 0, notes: '', class: '💼 Work' },
+        'skill2': { displayName: 'Learning', icon: EMOJI_ICONS[14].emoji, hours: 0, notes: '', class: '🎓 Education' },
+        'skill3': { displayName: 'Exercise', icon: EMOJI_ICONS[17].emoji, hours: 0, notes: '', class: '❤️ Health' },
     };
     return {
         characterName: 'Adventurer',
@@ -50,6 +50,14 @@ export function loadData() {
     const savedData = localStorage.getItem('rpgSkillTracker_final_v5');
     if (savedData) {
         const parsedData = JSON.parse(savedData);
+        if (parsedData.skills) {
+            for (const skillId in parsedData.skills) {
+                if (parsedData.skills[skillId].icon && parsedData.skills[skillId].icon.includes('https://')) {
+                    parsedData.skills[skillId].icon = '💡';
+                }
+            }
+        }
+        
         if (!parsedData.skillOrder) parsedData.skillOrder = Object.keys(parsedData.skills);
         if (!parsedData.totalHoursGoal) parsedData.totalHoursGoal = 1000;
         if (!parsedData.theme) parsedData.theme = 'light';
@@ -123,7 +131,7 @@ export function updateSkillHours(skillId, hoursToAdd) {
 
 export function addSkill() {
     const newId = `skill${Date.now()}`;
-    characterData.skills[newId] = { displayName: 'New Skill', icon: 'https://img.icons8.com/ios/50/ffffff/plus-math.png', hours: 0, notes: '', class: SKILL_CLASSES[0] };
+    characterData.skills[newId] = { displayName: 'New Skill', icon: EMOJI_ICONS[0].emoji, hours: 0, notes: '', class: SKILL_CLASSES[0] };
     characterData.skillOrder.push(newId);
     saveData();
     dispatchStructureUpdate();

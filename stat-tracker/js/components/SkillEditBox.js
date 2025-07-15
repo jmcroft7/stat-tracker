@@ -1,12 +1,12 @@
-import { ICON_LIBRARY, SKILL_CLASSES } from '../config.js';
+import { EMOJI_ICONS, SKILL_CLASSES } from '../config.js';
 
 export function createSkillEditBox(skill, skillId, index, totalSkills) {
     const box = document.createElement('div');
     box.className = 'skill-edit-box skill-edit-box--collapsed';
     box.dataset.skillId = skillId;
 
-    const iconOptions = ICON_LIBRARY.map(icon => `<option value="${icon.url}" ${skill.icon === icon.url ? 'selected' : ''}>${icon.name}</option>`).join('');
     const classOptions = SKILL_CLASSES.map(c => `<option value="${c}" ${skill.class === c ? 'selected' : ''}>${c}</option>`).join('');
+    const selectedIcon = EMOJI_ICONS.find(icon => icon.emoji === skill.icon);
 
     box.innerHTML = `
         <div class="skill-edit-box__header">
@@ -19,7 +19,24 @@ export function createSkillEditBox(skill, skillId, index, totalSkills) {
             </div>
         </div>
         <div class="skill-edit-box__content">
-            <div class="form-group"><label>Icon:</label><div class="icon-select-wrapper"><select class="edit-icon-select">${iconOptions}</select><img src="${skill.icon}" class="icon-preview" alt="Icon preview"></div></div>
+            <div class="form-group">
+                <label>Icon:</label>
+                <div class="searchable-dropdown" data-skill-id="${skillId}">
+                    <div class="searchable-dropdown__search-container">
+                        <input type="text" class="searchable-dropdown__search" placeholder="Search icons..." data-icon="${skill.icon}" value="${selectedIcon ? selectedIcon.name : ''}">
+                        <span class="searchable-dropdown__icon-preview">${skill.icon}</span>
+                    </div>
+                    <div class="searchable-dropdown__list-container">
+                        <ul class="searchable-dropdown__list">
+                           ${EMOJI_ICONS.map(icon => `
+                                <li data-value="${icon.emoji}" data-name="${icon.name}" class="${skill.icon === icon.emoji ? 'selected' : ''}">
+                                    <span class="searchable-dropdown__name">${icon.name}</span>
+                                    <span class="searchable-dropdown__emoji">${icon.emoji}</span>
+                                </li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            </div>
             <div class="form-group"><label>Class:</label><select class="edit-class">${classOptions}</select></div>
             <div class="form-group"><label>Notes:</label><textarea class="edit-notes">${skill.notes || ''}</textarea></div>
         </div>
