@@ -5,6 +5,7 @@ import { createStatCard } from './components/StatCard.js';
 import { createSkillEditBox } from './components/SkillEditBox.js';
 
 let skillChart = null;
+let toastTimeout;
 
 // --- Helper Functions ---
 
@@ -36,6 +37,35 @@ export function getRankFromHours(hours) {
 }
 
 // --- UI Building Functions ---
+
+function hideToast() {
+    elements.toastNotification.classList.remove('show');
+}
+
+export function showToast(message, type = 'success') {
+    const { toastNotification, toastMessage, toastCloseBtn } = elements;
+    
+    // Clear any existing timer
+    if (toastTimeout) {
+        clearTimeout(toastTimeout);
+    }
+
+    // Set message and style
+    toastMessage.textContent = message;
+    toastNotification.className = 'show'; // Reset classes and show
+    if (type === 'danger') {
+        toastNotification.classList.add('danger');
+    }
+
+    // Set auto-dismiss timer
+    toastTimeout = setTimeout(hideToast, 4000); // 4 seconds
+
+    // Add click listener to close button
+    toastCloseBtn.onclick = () => {
+        clearTimeout(toastTimeout);
+        hideToast();
+    };
+}
 
 export function applyTheme() {
     document.body.classList.toggle('dark-mode', characterData.theme === 'dark');
@@ -363,7 +393,7 @@ export function buildRecentActivityPage() {
 export function updateSkillTotalHoursDisplay(skillId) {
     if (skillId && characterData.skills[skillId]) {
         const hours = characterData.skills[skillId].hours.toFixed(1);
-        elements.skillTotalHours.textContent = `Current Total: ${hours} hours`;
+        elements.skillTotalHours.textContent = `Current: ${hours} hours`;
     } else {
         elements.skillTotalHours.textContent = '';
     }

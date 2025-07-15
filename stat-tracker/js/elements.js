@@ -5,7 +5,7 @@ export const elements = {
     totalLevelValue: document.getElementById('total-level-value'),
     statGrid: document.getElementById('stat-grid-main'),
     skillSelect: document.getElementById('skill-select'),
-    skillTotalHours: document.getElementById('skill-total-hours'), // Add this line
+    skillTotalHours: document.getElementById('skill-total-hours'),
     hoursInput: document.getElementById('hours-input'),
     addHoursBtn: document.getElementById('add-hours-btn'),
     editSkillsContainer: document.getElementById('edit-skills-container'),
@@ -13,6 +13,9 @@ export const elements = {
     saveEditsBtn: document.getElementById('save-edits-btn'),
     addSkillBtn: document.getElementById('add-skill-btn'),
     tooltip: document.getElementById('tooltip'),
+    toastNotification: document.getElementById('toast-notification'),
+    toastMessage: document.getElementById('toast-message'),
+    toastCloseBtn: document.getElementById('toast-close-btn'),
     saveToFileBtn: document.getElementById('save-to-file-btn'),
     loadFromFileBtn: document.getElementById('load-from-file-btn'),
     fileLoaderInput: document.getElementById('file-loader-input'),

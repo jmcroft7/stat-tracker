@@ -2,8 +2,14 @@ import { elements } from './elements.js';
 import * as state from './state.js';
 import {
     navigateTo,
-    applyTheme, buildRecentActivityPage, getLevelFromHours,
-    hoursCache1k, hoursCache10k, buildChart, updateSkillTotalHoursDisplay
+    applyTheme,
+    buildRecentActivityPage,
+    getLevelFromHours,
+    hoursCache1k,
+    hoursCache10k,
+    buildChart,
+    updateSkillTotalHoursDisplay,
+    showToast
 } from './ui.js';
 import { MAX_LEVEL } from './config.js';
 
@@ -31,11 +37,10 @@ export function setupEventListeners() {
                 // If we are leaving the page (by choice or after saving), reset the dirty flag
                 isSkillsPageDirty = false;
 
-               if (key === 'logHours') {
+                if (key === 'logHours') {
                     // Use a small timeout to ensure the UI is ready before updating the hours display
                     setTimeout(() => updateSkillTotalHoursDisplay(elements.skillSelect.value), 0);
                 }
-
                 if (key === 'recent') buildRecentActivityPage();
                 if (key === 'dashboard') buildChart();
                 navigateTo(key);
@@ -45,6 +50,10 @@ export function setupEventListeners() {
                 }
             });
         }
+    });
+    
+    elements.skillSelect.addEventListener('change', (e) => {
+        updateSkillTotalHoursDisplay(e.target.value);
     });
 
     elements.moreBtn.addEventListener('click', (e) => {
@@ -88,19 +97,20 @@ export function setupEventListeners() {
         }
     });
 
-    elements.skillSelect.addEventListener('change', (e) => {
-        updateSkillTotalHoursDisplay(e.target.value);
-    });
-
 
     // --- State-Changing Actions ---
     elements.addHoursBtn.addEventListener('click', () => {
         const skillId = elements.skillSelect.value;
         const hoursToAdd = parseFloat(elements.hoursInput.value);
         if (skillId && !isNaN(hoursToAdd) && hoursToAdd > 0) {
+            const skillName = state.characterData.skills[skillId].displayName;
             state.updateSkillHours(skillId, hoursToAdd);
+            
+            showToast(`${hoursToAdd} hours added to ${skillName}!`);
+            
             elements.hoursInput.value = '';
-            navigateTo('stats');
+            // Update the display to show the new total
+            updateSkillTotalHoursDisplay(skillId);
         }
     });
 
@@ -126,11 +136,12 @@ export function setupEventListeners() {
         });
         state.saveAllSkillEdits(edits);
         isSkillsPageDirty = false; // Reset the flag after saving
-        alert("Changes saved!");
+        showToast("All changes saved!");
     });
 
     elements.addSkillBtn.addEventListener('click', () => {
         state.addSkill();
+        showToast("New skill added!");
     });
 
     // Set dirty flag when any input on the skills page changes
@@ -150,6 +161,7 @@ export function setupEventListeners() {
             const skillName = state.characterData.skills[skillId].displayName;
             if (confirm(`Are you sure you want to delete "${skillName}"?`)) {
                 state.deleteSkill(skillId);
+                showToast(`"${skillName}" has been deleted.`, 'danger');
             }
         } else if (button.classList.contains('skill-edit-box__control-btn--minimize')) {
             box.classList.toggle('skill-edit-box--collapsed');
@@ -246,9 +258,9 @@ export function setupEventListeners() {
                 const data = JSON.parse(event.target.result);
                 state.loadFromFile(data);
                 applyTheme();
-                alert("Character data loaded successfully!");
+                showToast("Character data loaded successfully!");
             } catch (error) {
-                alert("Error parsing file.");
+                showToast("Error parsing file.", 'danger');
             }
         };
         reader.readAsText(file);
