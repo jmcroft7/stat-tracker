@@ -3,7 +3,7 @@ import * as state from './state.js';
 import {
     navigateTo,
     applyTheme, buildRecentActivityPage, getLevelFromHours,
-    hoursCache1k, hoursCache10k, buildChart
+    hoursCache1k, hoursCache10k, buildChart, updateSkillTotalHoursDisplay
 } from './ui.js';
 import { MAX_LEVEL } from './config.js';
 
@@ -30,6 +30,11 @@ export function setupEventListeners() {
                 }
                 // If we are leaving the page (by choice or after saving), reset the dirty flag
                 isSkillsPageDirty = false;
+
+               if (key === 'logHours') {
+                    // Use a small timeout to ensure the UI is ready before updating the hours display
+                    setTimeout(() => updateSkillTotalHoursDisplay(elements.skillSelect.value), 0);
+                }
 
                 if (key === 'recent') buildRecentActivityPage();
                 if (key === 'dashboard') buildChart();
@@ -81,6 +86,10 @@ export function setupEventListeners() {
             const view = target.dataset.view;
             state.setActiveGraphView(view);
         }
+    });
+
+    elements.skillSelect.addEventListener('change', (e) => {
+        updateSkillTotalHoursDisplay(e.target.value);
     });
 
 

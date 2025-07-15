@@ -5,6 +5,7 @@ export const elements = {
     totalLevelValue: document.getElementById('total-level-value'),
     statGrid: document.getElementById('stat-grid-main'),
     skillSelect: document.getElementById('skill-select'),
+    skillTotalHours: document.getElementById('skill-total-hours'), // Add this line
     hoursInput: document.getElementById('hours-input'),
     addHoursBtn: document.getElementById('add-hours-btn'),
     editSkillsContainer: document.getElementById('edit-skills-container'),

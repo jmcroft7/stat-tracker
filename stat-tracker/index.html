@@ -55,10 +55,16 @@
             <div class="header">
                 <h2>Log Progress</h2>
             </div>
-            <div class="form-group"> <label for="skill-select">For Skill:</label> <select id="skill-select"></select>
+            <div class="form-group">
+                <label for="skill-select">For Skill:</label>
+                <select id="skill-select"></select>
+                <span id="skill-total-hours"
+                    style="display: block; text-align: right; font-size: 0.9em; color: var(--text-secondary); margin-top: 5px;"></span>
             </div>
-            <div class="form-group"> <label for="hours-input">Hours to Add:</label> <input type="number"
-                    id="hours-input" min="0" placeholder="e.g., 10.5"> </div>
+            <div class="form-group">
+                <label for="hours-input">Hours to Add:</label>
+                <input type="number" id="hours-input" min="0" placeholder="e.g., 10.5">
+            </div>
             <button id="add-hours-btn" class="nav-button">Add</button>
         </div>
 
@@ -70,7 +76,7 @@
                 <button class="stat-filter-btn" data-view="weekly">Weekly</button>
                 <button class="stat-filter-btn" data-view="monthly">Monthly</button>
             </div>
-             <div class="form-group form-group-inline" style="padding: 10px 0; margin-bottom: 0;">
+            <div class="form-group form-group-inline" style="padding: 10px 0; margin-bottom: 0;">
                 <label>View by Class</label>
                 <label class="switch">
                     <input type="checkbox" id="recent-view-toggle">
@@ -88,7 +94,8 @@
             <div class="form-group form-group-inline">
                 <label class="hard-mode-label">
                     Hard Mode
-                    <span class="tooltip-trigger" data-tooltip="Sets the max level goal to 10,000 hours instead of 1,000.">?</span>
+                    <span class="tooltip-trigger"
+                        data-tooltip="Sets the max level goal to 10,000 hours instead of 1,000.">?</span>
                 </label>
                 <label class="switch">
                     <input type="checkbox" id="hard-mode-toggle">
@@ -136,8 +143,10 @@
                     want to improve, whether it's for a hobby, professional development, or personal growth.</p>
 
                 <h3>The Leveling System</h3>
-                <p>Progression is based on a logarithmic curve. By default, reaching level 99 takes 1,000 hours of effort.</p>
-                <p>For those seeking a greater challenge, "Hard Mode" can be enabled on the Skills page. This adjusts the goal to 10,000 hours, requiring a much greater time investment to achieve mastery.</p>
+                <p>Progression is based on a logarithmic curve. By default, reaching level 99 takes 1,000 hours of
+                    effort.</p>
+                <p>For those seeking a greater challenge, "Hard Mode" can be enabled on the Skills page. This adjusts
+                    the goal to 10,000 hours, requiring a much greater time investment to achieve mastery.</p>
 
                 <h3>The Ranks</h3>
                 <p>Ranks are awarded based on the total hours invested in a skill, marking major milestones in your

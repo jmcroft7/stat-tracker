@@ -359,3 +359,12 @@ export function buildRecentActivityPage() {
         buildWeeklySummaryView();
     }
 }
+
+export function updateSkillTotalHoursDisplay(skillId) {
+    if (skillId && characterData.skills[skillId]) {
+        const hours = characterData.skills[skillId].hours.toFixed(1);
+        elements.skillTotalHours.textContent = `Current Total: ${hours} hours`;
+    } else {
+        elements.skillTotalHours.textContent = '';
+    }
+}
