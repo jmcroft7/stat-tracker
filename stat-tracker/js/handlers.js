@@ -69,6 +69,11 @@ export function setupEventListeners() {
             state.setActiveRecentView(view);
         }
     });
+    
+    elements.recentViewToggle.addEventListener('change', (e) => {
+        const newView = e.target.checked ? 'class' : 'skill';
+        state.setActiveRecentSubView(newView);
+    });
 
     document.getElementById('graph-page-filters').addEventListener('click', (e) => {
         const target = e.target.closest('.stat-filter-btn');

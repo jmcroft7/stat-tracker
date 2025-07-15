@@ -277,20 +277,39 @@ function renderSummary(logs, headerText, timePeriod) {
         elements.recentActivityContainer.innerHTML += `<p>No hours logged this ${timePeriod}.</p>`;
         return;
     }
-    const summary = logs.reduce((acc, log) => {
-        if (!acc[log.skillId]) { acc[log.skillId] = 0; }
-        acc[log.skillId] += log.hours;
-        return acc;
-    }, {});
-    const sortedSummary = Object.entries(summary).map(([skillId, hours]) => ({ skillId, hours })).sort((a, b) => b.hours - a.hours);
+
+    const viewType = characterData.activeRecentSubView;
     const summaryList = document.createElement('div');
     summaryList.className = 'summary-list';
-    sortedSummary.forEach(item => {
-        const skill = characterData.skills[item.skillId];
-        if (skill) {
-            summaryList.innerHTML += `<div class="summary-item"><img src="${skill.icon}" alt="${skill.displayName} icon"><span class="summary-skill-name">${skill.displayName}</span><span class="summary-hours">${item.hours.toFixed(1)} hrs</span></div>`;
-        }
-    });
+
+    if (viewType === 'class') {
+        const summary = logs.reduce((acc, log) => {
+            const skill = characterData.skills[log.skillId];
+            if (skill && skill.class) {
+                if (!acc[skill.class]) { acc[skill.class] = 0; }
+                acc[skill.class] += log.hours;
+            }
+            return acc;
+        }, {});
+        const sortedSummary = Object.entries(summary).sort((a, b) => b[1] - a[1]);
+        sortedSummary.forEach(([className, hours]) => {
+            summaryList.innerHTML += `<div class="summary-item"><span class="summary-skill-name">${className}</span><span class="summary-hours">${hours.toFixed(1)} hrs</span></div>`;
+        });
+
+    } else { // 'skill' view
+        const summary = logs.reduce((acc, log) => {
+            if (!acc[log.skillId]) { acc[log.skillId] = 0; }
+            acc[log.skillId] += log.hours;
+            return acc;
+        }, {});
+        const sortedSummary = Object.entries(summary).map(([skillId, hours]) => ({ skillId, hours })).sort((a, b) => b.hours - a.hours);
+        sortedSummary.forEach(item => {
+            const skill = characterData.skills[item.skillId];
+            if (skill) {
+                summaryList.innerHTML += `<div class="summary-item"><img src="${skill.icon}" alt="${skill.displayName} icon"><span class="summary-skill-name">${skill.displayName}</span><span class="summary-hours">${item.hours.toFixed(1)} hrs</span></div>`;
+            }
+        });
+    }
     elements.recentActivityContainer.appendChild(summaryList);
 }
 
@@ -324,57 +343,19 @@ export function buildMonthlySummaryView() {
     renderSummary(monthlyLogs, header, 'month');
 }
 
-export function buildDailyLogView() {
-    elements.recentActivityContainer.innerHTML = '';
-    const now = new Date();
-    const monthlyLogs = characterData.hourLogs.filter(log => {
-        const logDate = new Date(log.date);
-        return logDate.getMonth() === now.getMonth() && logDate.getFullYear() === now.getFullYear();
-    });
-    if (monthlyLogs.length === 0) {
-        elements.recentActivityContainer.innerHTML = '<p>No hours logged this month.</p>';
-        return;
-    }
-    monthlyLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
-    const groupedLogs = monthlyLogs.reduce((acc, log) => {
-        const dateStr = new Date(log.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        if (!acc[dateStr]) { acc[dateStr] = []; }
-        acc[dateStr].push(log);
-        return acc;
-    }, {});
-    const activityList = document.createElement('div');
-    activityList.className = 'recent-activity-list';
-    for (const dateStr in groupedLogs) {
-        const dayLogs = groupedLogs[dateStr];
-        const dateHeader = document.createElement('h3');
-        dateHeader.className = 'activity-date-header';
-        dateHeader.textContent = dateStr;
-        activityList.appendChild(dateHeader);
-        const ul = document.createElement('ul');
-        ul.className = 'activity-day-list';
-        dayLogs.forEach(log => {
-            const skillName = characterData.skills[log.skillId] ? characterData.skills[log.skillId].displayName : 'Unknown Skill';
-            const li = document.createElement('li');
-            li.innerHTML = `Logged <strong>${log.hours}</strong> hours for <strong>${skillName}</strong>.`;
-            ul.appendChild(li);
-        });
-        activityList.appendChild(ul);
-    }
-    elements.recentActivityContainer.appendChild(activityList);
-}
-
 export function buildRecentActivityPage() {
     // Update button active states
     document.querySelectorAll('#recent-page-filters .stat-filter-btn').forEach(btn => {
         btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeRecentView);
     });
 
+    // Set toggle state
+    elements.recentViewToggle.checked = characterData.activeRecentSubView === 'class';
+
     const selectedView = characterData.activeRecentView;
     if (selectedView === 'monthly') {
         buildMonthlySummaryView();
-    } else if (selectedView === 'weekly') {
+    } else { // Default to weekly
         buildWeeklySummaryView();
-    } else {
-        buildDailyLogView();
     }
 }

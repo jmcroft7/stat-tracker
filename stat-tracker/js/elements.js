@@ -17,6 +17,7 @@ export const elements = {
     fileLoaderInput: document.getElementById('file-loader-input'),
     recentActivityContainer: document.getElementById('recent-activity-container'),
     recentViewSelect: document.getElementById('recent-view-select'),
+    recentViewToggle: document.getElementById('recent-view-toggle'),
     hardModeToggle: document.getElementById('hard-mode-toggle'),
     themeToggle: document.getElementById('theme-toggle'),
     moreBtn: document.getElementById('nav-more'),

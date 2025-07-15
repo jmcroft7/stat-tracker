@@ -67,10 +67,17 @@
                 <h2>Recent Activity</h2>
             </div>
             <div class="stat-filters" id="recent-page-filters">
-                <button class="stat-filter-btn" data-view="daily">Daily</button>
                 <button class="stat-filter-btn" data-view="weekly">Weekly</button>
                 <button class="stat-filter-btn" data-view="monthly">Monthly</button>
             </div>
+             <div class="form-group form-group-inline" style="padding: 10px 0; margin-bottom: 0;">
+                <label>View by Class</label>
+                <label class="switch">
+                    <input type="checkbox" id="recent-view-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <hr style="border-color: var(--skill-border); margin-top: 0;">
             <div id="recent-activity-container"></div>
         </div>
 

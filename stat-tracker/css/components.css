@@ -197,9 +197,9 @@ body.light-mode .stat .stat__icon {
 }
 
 .stat-filter-btn--active {
-    background: var(--gradient-purple);
+    background: #000;
     color: #fff;
-    border-color: var(--highlight-color);
+    border-color: #000;
 }
 
 

@@ -24,16 +24,17 @@ function dispatchGraphViewChange() {
 
 export function getDefaultData() {
     const defaultSkills = {
-        'skill1': { displayName: 'Project', icon: 'https://img.icons8.com/ios-filled/50/ffffff/checklist.png', hours: 0, notes: '', class: 'Work' },
-        'skill2': { displayName: 'Learning', icon: 'https://img.icons8.com/ios-filled/50/ffffff/book.png', hours: 0, notes: '', class: 'Education' },
-        'skill3': { displayName: 'Exercise', icon: 'https://img.icons8.com/ios-filled/50/ffffff/running.png', hours: 0, notes: '', class: 'Health' },
+        'skill1': { displayName: 'Project', icon: 'https://img.icons8.com/ios-filled/50/ffffff/checklist.png', hours: 0, notes: '', class: '💼 Work' },
+        'skill2': { displayName: 'Learning', icon: 'https://img.icons8.com/ios-filled/50/ffffff/book.png', hours: 0, notes: '', class: '🎓 Education' },
+        'skill3': { displayName: 'Exercise', icon: 'https://img.icons8.com/ios-filled/50/ffffff/running.png', hours: 0, notes: '', class: '❤️ Health' },
     };
     return {
         characterName: 'Adventurer',
         totalHoursGoal: 1000,
         theme: 'light',
         activeStatView: 'overall', // 'overall', 'total', or 'recent'
-        activeRecentView: 'daily', // 'daily', 'weekly', or 'monthly'
+        activeRecentView: 'weekly', // 'weekly', or 'monthly'
+        activeRecentSubView: 'skill', // 'skill' or 'class'
         activeGraphView: 'skill', // 'skill', 'class', or 'recent'
         skillOrder: ['skill1', 'skill2', 'skill3'],
         skills: defaultSkills,
@@ -53,7 +54,8 @@ export function loadData() {
         if (!parsedData.totalHoursGoal) parsedData.totalHoursGoal = 1000;
         if (!parsedData.theme) parsedData.theme = 'light';
         if (!parsedData.activeStatView) parsedData.activeStatView = 'overall';
-        if (!parsedData.activeRecentView) parsedData.activeRecentView = 'daily';
+        if (!parsedData.activeRecentView) parsedData.activeRecentView = 'weekly';
+        if (!parsedData.activeRecentSubView) parsedData.activeRecentSubView = 'skill';
         if (!parsedData.activeGraphView) parsedData.activeGraphView = 'skill';
         if (!parsedData.hourLogs) parsedData.hourLogs = [];
         for (const skillId in parsedData.skills) {
@@ -81,8 +83,16 @@ export function setActiveStatView(view) {
 }
 
 export function setActiveRecentView(view) {
-    if (['daily', 'weekly', 'monthly'].includes(view)) {
+    if (['weekly', 'monthly'].includes(view)) {
         characterData.activeRecentView = view;
+        saveData();
+        dispatchRecentViewChange();
+    }
+}
+
+export function setActiveRecentSubView(view) {
+    if (['skill', 'class'].includes(view)) {
+        characterData.activeRecentSubView = view;
         saveData();
         dispatchRecentViewChange();
     }
