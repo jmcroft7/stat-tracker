@@ -190,7 +190,7 @@ export function buildUI() {
         });
         elements.statGrid.insertAdjacentHTML('beforeend', statCardHTML);
         
-        elements.skillSelect.innerHTML += `<option value="${skillId}">${skill.icon} ${skill.displayName}</option>`;
+        elements.skillSelect.innerHTML += `<option value="${skillId}">${skill.displayName} ${skill.icon}</option>`;
 
         const skillEditBox = createSkillEditBox(skill, skillId, index, characterData.skillOrder.length);
         elements.editSkillsContainer.appendChild(skillEditBox);

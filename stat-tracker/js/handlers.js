@@ -1,5 +1,6 @@
 import { elements } from './elements.js';
 import * as state from './state.js';
+import { EMOJI_ICONS } from './config.js';
 import {
     navigateTo,
     applyTheme,
@@ -212,13 +213,14 @@ export function setupEventListeners() {
             const list = searchInput.closest('.searchable-dropdown').querySelector('.searchable-dropdown__list');
             const items = list.getElementsByTagName('li');
             const iconPreview = searchInput.parentElement.querySelector('.searchable-dropdown__icon-preview');
-
-            // Hide icon preview while searching
+            
             iconPreview.style.display = 'none';
 
+            const fuse = new Fuse(EMOJI_ICONS, { keys: ['name', 'emoji'], threshold: 0.3 });
+            const results = filter ? fuse.search(filter).map(result => result.item.emoji) : EMOJI_ICONS.map(i => i.emoji);
+            
             for (let i = 0; i < items.length; i++) {
-                const name = items[i].querySelector('.searchable-dropdown__name').textContent;
-                if (name.toLowerCase().indexOf(filter) > -1) {
+                if (results.includes(items[i].dataset.value)) {
                     items[i].style.display = "";
                 } else {
                     items[i].style.display = "none";

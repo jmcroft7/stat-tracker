@@ -23,8 +23,7 @@ export function createSkillEditBox(skill, skillId, index, totalSkills) {
                 <label>Icon:</label>
                 <div class="searchable-dropdown" data-skill-id="${skillId}">
                     <div class="searchable-dropdown__search-container">
-                        <input type="text" class="searchable-dropdown__search" placeholder="Search icons..." data-icon="${skill.icon}" value="${selectedIcon ? selectedIcon.name : ''}">
-                        <span class="searchable-dropdown__icon-preview">${skill.icon}</span>
+                        <input type="text" class="searchable-dropdown__search" placeholder="Search icons..." value="${selectedIcon ? `${selectedIcon.name} ${skill.icon}` : ''}">
                     </div>
                     <div class="searchable-dropdown__list-container">
                         <ul class="searchable-dropdown__list">
