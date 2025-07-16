@@ -1,6 +1,6 @@
 export const elements = {
-    pages: { stats: document.getElementById('stats-page'), dashboard: document.getElementById('dashboard-page'), logHours: document.getElementById('log-hours-page'), recent: document.getElementById('recent-page'), skills: document.getElementById('skills-page'), settings: document.getElementById('settings-page'), about: document.getElementById('about-page') },
-    nav: { stats: document.getElementById('nav-stats'), dashboard: document.getElementById('nav-dashboard'), logHours: document.getElementById('nav-log-hours'), recent: document.getElementById('nav-recent'), skills: document.getElementById('nav-skills'), settings: document.getElementById('nav-settings'), about: document.getElementById('nav-about') },
+    pages: { stats: document.getElementById('stats-page'), dashboard: document.getElementById('dashboard-page'), logHours: document.getElementById('log-hours-page'), recent: document.getElementById('recent-page'), skills: document.getElementById('skills-page'), settings: document.getElementById('settings-page'), about: document.getElementById('about-page'), achievements: document.getElementById('achievements-page') },
+    nav: { stats: document.getElementById('nav-stats'), dashboard: document.getElementById('nav-dashboard'), logHours: document.getElementById('nav-log-hours'), recent: document.getElementById('nav-recent'), skills: document.getElementById('nav-skills'), settings: document.getElementById('nav-settings'), about: document.getElementById('nav-about'), achievements: document.getElementById('nav-achievements') },
     characterNameHeader: document.getElementById('character-name-header'),
     totalLevelValue: document.getElementById('total-level-value'),
     statGrid: document.getElementById('stat-grid-main'),
@@ -18,9 +18,11 @@ export const elements = {
     recentViewToggle: document.getElementById('recent-view-toggle'),
     hardModeToggle: document.getElementById('hard-mode-toggle'),
     themeSelect: document.getElementById('theme-select'),
+    titleSelect: document.getElementById('title-select'),
     moreBtn: document.getElementById('nav-more'),
     moreDropdown: document.getElementById('more-dropdown'),
     skillChartCanvas: document.getElementById('skill-chart'),
+    achievementsContainer: document.getElementById('achievements-container'),
     
     // Page Filters
     statsPageFilters: document.getElementById('stats-page-filters'),

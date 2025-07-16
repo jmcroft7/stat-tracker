@@ -678,3 +678,61 @@ input:checked + .slider:before {
     white-space: pre-wrap;
     border: 1px solid var(--border-color);
 }
+/* --- ACHIEVEMENTS PAGE --- */
+.achievements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background-color: var(--skill-bg);
+    border: 1px solid var(--skill-border);
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+.achievement-item.locked {
+    opacity: 0.6;
+}
+.achievement-status-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    flex-shrink: 0;
+    transition: background-color 0.2s, color 0.2s;
+}
+.achievement-item.locked .achievement-status-icon {
+    background-color: var(--skill-border);
+    color: var(--text-secondary);
+}
+.achievement-item.unlocked .achievement-status-icon {
+    background-color: var(--success-color);
+    color: #fff;
+}
+.achievement-icon {
+    font-size: 2.5em;
+    flex-shrink: 0;
+}
+.achievement-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.achievement-name {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.achievement-description {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}

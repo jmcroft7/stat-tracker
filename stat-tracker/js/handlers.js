@@ -5,9 +5,7 @@ import {
     navigateTo,
     applyTheme,
     buildRecentActivityPage,
-    getLevelFromHours,
-    hoursCache1k,
-    hoursCache10k,
+    buildAchievementsPage,
     buildChart,
     buildLogPage,
     updateSkillTotalHoursDisplay,
@@ -18,54 +16,58 @@ import { MAX_LEVEL } from './config.js';
 let isSkillsPageDirty = false;
 
 function setupButtonListeners() {
-    document.getElementById('add-hours-btn').addEventListener('click', () => {
-        const skillId = elements.skillSelect.value;
-        const hoursToAdd = parseFloat(elements.hoursInput.value);
-        if (skillId && !isNaN(hoursToAdd) && hoursToAdd > 0) {
-            const skillName = state.characterData.skills[skillId].displayName;
-            state.updateSkillHours(skillId, hoursToAdd);
-            
-            showToast(`${hoursToAdd} hours added to ${skillName}!`);
-            
-            elements.hoursInput.value = '';
-            updateSkillTotalHoursDisplay(skillId);
+    document.getElementById('add-hours-btn-container').addEventListener('click', (e) => {
+        if (e.target.id === 'add-hours-btn') {
+            const skillId = elements.skillSelect.value;
+            const hoursToAdd = parseFloat(elements.hoursInput.value);
+            if (skillId && !isNaN(hoursToAdd) && hoursToAdd > 0) {
+                const skillName = state.characterData.skills[skillId].displayName;
+                state.updateSkillHours(skillId, hoursToAdd);
+                
+                showToast(`${hoursToAdd} hours added to ${skillName}!`);
+                
+                elements.hoursInput.value = '';
+                updateSkillTotalHoursDisplay(skillId);
+            }
+        }
+    });
+    
+    document.getElementById('edit-page-actions-container').addEventListener('click', (e) => {
+        if (e.target.id === 'add-skill-btn') {
+            state.addSkill();
+            showToast("New skill added!");
+        } else if (e.target.id === 'save-edits-btn') {
+            const edits = [];
+            document.querySelectorAll('.skill-edit-box').forEach(box => {
+                const skillId = box.dataset.skillId;
+                edits.push({
+                    id: skillId,
+                    displayName: box.querySelector('.skill-edit-box__display-name').value,
+                    icon: box.querySelector('.searchable-dropdown__search').dataset.icon,
+                    skillClass: box.querySelector('.edit-class').value,
+                    notes: box.querySelector('.edit-notes').value
+                });
+            });
+            state.saveAllSkillEdits(edits);
+            isSkillsPageDirty = false;
+            showToast("All changes saved!");
         }
     });
 
-    document.getElementById('add-skill-btn').addEventListener('click', () => {
-        state.addSkill();
-        showToast("New skill added!");
+    document.getElementById('file-controls-container').addEventListener('click', (e) => {
+        if (e.target.id === 'save-to-file-btn') {
+            const dataStr = JSON.stringify(state.characterData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${state.characterData.characterName.replace(/\s/g, '_')}_skills.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        } else if (e.target.id === 'load-from-file-btn') {
+            elements.fileLoaderInput.click();
+        }
     });
-
-    document.getElementById('save-edits-btn').addEventListener('click', () => {
-        const edits = [];
-        document.querySelectorAll('.skill-edit-box').forEach(box => {
-            const skillId = box.dataset.skillId;
-            edits.push({
-                id: skillId,
-                displayName: box.querySelector('.skill-edit-box__display-name').value,
-                icon: box.querySelector('.searchable-dropdown__search').dataset.icon,
-                skillClass: box.querySelector('.edit-class').value,
-                notes: box.querySelector('.edit-notes').value
-            });
-        });
-        state.saveAllSkillEdits(edits);
-        isSkillsPageDirty = false;
-        showToast("All changes saved!");
-    });
-
-    document.getElementById('save-to-file-btn').addEventListener('click', () => {
-        const dataStr = JSON.stringify(state.characterData, null, 2);
-        const blob = new Blob([dataStr], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${state.characterData.characterName.replace(/\s/g, '_')}_skills.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-    });
-
-    document.getElementById('load-from-file-btn').addEventListener('click', () => elements.fileLoaderInput.click());
 }
 
 export function setupEventListeners() {
@@ -74,7 +76,7 @@ export function setupEventListeners() {
     window.addEventListener('structure-updated', setupButtonListeners);
 
     // --- Navigation ---
-    const navLinks = { ...elements.nav, settings: document.getElementById('nav-settings'), about: document.getElementById('nav-about') };
+    const navLinks = { ...elements.nav, settings: document.getElementById('nav-settings'), about: document.getElementById('nav-about'), achievements: document.getElementById('nav-achievements') };
 
     Object.keys(navLinks).forEach(key => {
         const navElement = navLinks[key];
@@ -98,8 +100,9 @@ export function setupEventListeners() {
                 if (key === 'logHours') buildLogPage();
                 if (key === 'recent') buildRecentActivityPage();
                 if (key === 'dashboard') buildChart();
+                if (key === 'achievements') buildAchievementsPage();
 
-                if (key === 'settings' || key === 'about') {
+                if (['settings', 'about', 'achievements'].includes(key)) {
                     elements.moreDropdown.classList.add('hidden');
                 }
             });
@@ -126,7 +129,7 @@ export function setupEventListeners() {
         });
     });
 
-    // --- Page-Specific Filters ---
+    // --- Page-Specific Filters (Using Event Delegation) ---
     elements.logPageFilters.addEventListener('click', (e) => {
         const target = e.target.closest('.stat-filter-btn');
         if (target) {
@@ -165,7 +168,7 @@ export function setupEventListeners() {
     });
 
 
-    // --- State-Changing Actions ---
+    // --- ACTION BUTTONS & DYNAMIC LISTENERS (Using Event Delegation) ---
     setupButtonListeners();
     
     elements.detailedLogContainer.addEventListener('click', e => {
@@ -360,5 +363,10 @@ export function setupEventListeners() {
         const newTheme = e.target.value;
         state.setTheme(newTheme);
         applyTheme();
+    });
+
+    elements.titleSelect.addEventListener('change', (e) => {
+        const newTitleId = e.target.value;
+        state.setEquippedTitle(newTitleId);
     });
 }

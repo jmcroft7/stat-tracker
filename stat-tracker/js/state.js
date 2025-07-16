@@ -1,4 +1,5 @@
-import { EMOJI_ICONS, SKILL_CLASSES } from './config.js';
+import { EMOJI_ICONS, SKILL_CLASSES, ACHIEVEMENTS } from './config.js';
+import { showToast } from './ui.js';
 
 export let characterData = {};
 
@@ -26,6 +27,26 @@ function dispatchGraphViewChange() {
     window.dispatchEvent(new CustomEvent('graph-view-changed'));
 }
 
+function checkAndUnlockAchievements() {
+    let newAchievementUnlocked = false;
+    let totalHours = 0;
+    Object.values(characterData.skills).forEach(skill => totalHours += skill.hours);
+    const dataForCheck = { ...characterData, totalHours };
+
+    for (const id in ACHIEVEMENTS) {
+        if (!characterData.unlockedAchievements.includes(id)) {
+            if (ACHIEVEMENTS[id].condition(dataForCheck)) {
+                characterData.unlockedAchievements.push(id);
+                showToast(`Achievement Unlocked: ${ACHIEVEMENTS[id].name}!`, 'success');
+                newAchievementUnlocked = true;
+            }
+        }
+    }
+    if (newAchievementUnlocked) {
+        saveData();
+    }
+}
+
 export function getDefaultData() {
     const defaultSkills = {
         'skill1': { displayName: 'Project', icon: EMOJI_ICONS[0].emoji, hours: 0, notes: '', class: '💼 Work' },
@@ -35,15 +56,17 @@ export function getDefaultData() {
     return {
         characterName: 'Adventurer',
         totalHoursGoal: 1000,
-        theme: 'light', // 'light', 'dark', or 'classic'
+        theme: 'light',
         activeStatView: 'overall',
         activeRecentView: 'weekly',
         activeRecentSubView: 'skill',
         activeGraphView: 'skill',
-        activeLogView: 'add', // 'add' or 'view'
+        activeLogView: 'add',
         skillOrder: ['skill1', 'skill2', 'skill3'],
         skills: defaultSkills,
-        hourLogs: []
+        hourLogs: [],
+        unlockedAchievements: [],
+        equippedTitle: null,
     };
 }
 
@@ -73,6 +96,9 @@ export function loadData() {
         if (!parsedData.activeGraphView) parsedData.activeGraphView = 'skill';
         if (!parsedData.activeLogView) parsedData.activeLogView = 'add';
         if (!parsedData.hourLogs) parsedData.hourLogs = [];
+        if (!parsedData.unlockedAchievements) parsedData.unlockedAchievements = [];
+        if (!parsedData.hasOwnProperty('equippedTitle')) parsedData.equippedTitle = null;
+
         for (const skillId in parsedData.skills) {
             if (parsedData.skills[skillId].notes === undefined) {
                 parsedData.skills[skillId].notes = '';
@@ -129,6 +155,16 @@ export function setActiveGraphView(view) {
     }
 }
 
+export function setEquippedTitle(achievementId) {
+    if (achievementId === 'none') {
+        characterData.equippedTitle = null;
+    } else {
+        characterData.equippedTitle = achievementId;
+    }
+    saveData();
+    dispatchHoursUpdate(); // Easiest way to trigger a stat card redraw
+}
+
 export function updateCharacterName(newName) {
     characterData.characterName = newName || 'Adventurer';
     saveData();
@@ -139,6 +175,7 @@ export function updateSkillHours(skillId, hoursToAdd) {
     if (characterData.skills[skillId] && hoursToAdd > 0) {
         characterData.skills[skillId].hours += hoursToAdd;
         characterData.hourLogs.push({ date: new Date().toISOString(), skillId: skillId, hours: hoursToAdd });
+        checkAndUnlockAchievements();
         saveData();
         dispatchHoursUpdate();
     }
@@ -148,6 +185,7 @@ export function addSkill() {
     const newId = `skill${Date.now()}`;
     characterData.skills[newId] = { displayName: 'New Skill', icon: EMOJI_ICONS[0].emoji, hours: 0, notes: '', class: SKILL_CLASSES[0] };
     characterData.skillOrder.push(newId);
+    checkAndUnlockAchievements();
     saveData();
     dispatchStructureUpdate();
 }
@@ -174,7 +212,7 @@ export function deleteHourLog(logIndex) {
         characterData.hourLogs.splice(logIndex, 1);
         saveData();
         dispatchHoursUpdate();
-        dispatchLogUpdate(); // Rebuild the log page
+        dispatchLogUpdate();
     }
 }
 

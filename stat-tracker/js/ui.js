@@ -1,4 +1,4 @@
-import { MAX_LEVEL, SKILL_CLASSES } from './config.js';
+import { MAX_LEVEL, SKILL_CLASSES, ACHIEVEMENTS } from './config.js';
 import { elements } from './elements.js';
 import { characterData } from './state.js';
 import { createStatCard } from './components/StatCard.js';
@@ -86,18 +86,24 @@ function renderFilterButtons(container, filters, activeView) {
 
 function renderActionButtons() {
     const addHoursContainer = document.getElementById('add-hours-btn-container');
-    addHoursContainer.innerHTML = '';
-    addHoursContainer.appendChild(createButton({ id: 'add-hours-btn', text: 'Add' }));
+    if(addHoursContainer) {
+        addHoursContainer.innerHTML = '';
+        addHoursContainer.appendChild(createButton({ id: 'add-hours-btn', text: 'Add' }));
+    }
 
     const editActionsContainer = document.getElementById('edit-page-actions-container');
-    editActionsContainer.innerHTML = '';
-    editActionsContainer.appendChild(createButton({ id: 'add-skill-btn', text: 'Add New Skill' }));
-    editActionsContainer.appendChild(createButton({ id: 'save-edits-btn', text: 'Save All Changes' }));
+    if(editActionsContainer) {
+        editActionsContainer.innerHTML = '';
+        editActionsContainer.appendChild(createButton({ id: 'add-skill-btn', text: 'Add New Skill' }));
+        editActionsContainer.appendChild(createButton({ id: 'save-edits-btn', text: 'Save All Changes' }));
+    }
 
     const fileControlsContainer = document.getElementById('file-controls-container');
-    fileControlsContainer.innerHTML = '';
-    fileControlsContainer.appendChild(createButton({ id: 'save-to-file-btn', text: 'Save to File' }));
-    fileControlsContainer.appendChild(createButton({ id: 'load-from-file-btn', text: 'Load from File' }));
+    if(fileControlsContainer) {
+        fileControlsContainer.innerHTML = '';
+        fileControlsContainer.appendChild(createButton({ id: 'save-to-file-btn', text: 'Save to File' }));
+        fileControlsContainer.appendChild(createButton({ id: 'load-from-file-btn', text: 'Load from File' }));
+    }
 }
 
 
@@ -105,7 +111,7 @@ export function buildChart() {
     if (skillChart) {
         skillChart.destroy();
     }
-    
+
     renderFilterButtons(elements.graphPageFilters, [
         { text: 'Skill', view: 'skill' },
         { text: 'Class', view: 'class' },
@@ -185,6 +191,23 @@ export function buildChart() {
     });
 }
 
+function buildTitleDropdown() {
+    const select = elements.titleSelect;
+    select.innerHTML = '<option value="none">None</option>';
+    
+    characterData.unlockedAchievements.forEach(id => {
+        const achievement = ACHIEVEMENTS[id];
+        if (achievement) {
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = `${achievement.icon} ${achievement.name}`;
+            select.appendChild(option);
+        }
+    });
+
+    select.value = characterData.equippedTitle || 'none';
+}
+
 export function buildUI() {
     elements.statGrid.innerHTML = '';
     elements.skillSelect.innerHTML = '';
@@ -200,7 +223,7 @@ export function buildUI() {
     ], characterData.activeStatView);
 
     renderActionButtons();
-
+    buildTitleDropdown();
 
     const mainCardTitle = characterData.activeStatView === 'total' ? 'Total' : 'Overall';
     const mainCardSubText = characterData.activeStatView === 'total' ? 'Total Level' : 'Overall Level';
@@ -287,14 +310,22 @@ export function updateAllStatsDisplay() {
     const mainCard = document.getElementById('overall-card');
     if (mainCard) {
         const levelValueEl = mainCard.querySelector('.stat__level-value');
+        const subValueEl = mainCard.querySelector('.overall-label-badge');
+
         levelValueEl.dataset.tooltipText = `${Math.round(totalHours)} Total Hours`;
+
+        if (characterData.equippedTitle && ACHIEVEMENTS[characterData.equippedTitle]) {
+            subValueEl.textContent = `${ACHIEVEMENTS[characterData.equippedTitle].icon} ${ACHIEVEMENTS[characterData.equippedTitle].name}`;
+        } else {
+            subValueEl.textContent = currentView === 'total' ? 'Total Level' : 'Overall Level';
+        }
+
 
         if (currentView === 'total') {
             levelValueEl.textContent = Math.floor(totalLevelSum);
             mainCard.querySelector('.stat__progress').style.width = '100%';
             mainCard.querySelector('.stat__progress-bar').dataset.tooltipText = `${Math.round(totalHours)} Total Hours`;
             mainCard.querySelector('.stat__name').textContent = 'Total';
-            mainCard.querySelector('.overall-label-badge').textContent = 'Total Level';
 
         } else {
             const averageLevel = numberOfSkills > 0 ? totalLevelSum / numberOfSkills : 0;
@@ -308,7 +339,6 @@ export function updateAllStatsDisplay() {
             mainCard.querySelector('.stat__progress').style.width = `${progressPercentage}%`;
             mainCard.querySelector('.stat__progress-bar').dataset.tooltipText = `${levelsNeeded.toFixed(0)} more total levels for Lvl ${nextOverallLevel}`;
             mainCard.querySelector('.stat__name').textContent = 'Overall';
-            mainCard.querySelector('.overall-label-badge').textContent = 'Overall Level';
         }
     }
 
@@ -326,7 +356,7 @@ export function navigateTo(pageKey) {
 
     document.querySelectorAll('.nav__button').forEach(b => b.classList.remove('nav__button--active'));
 
-    const isDropdownItem = pageKey === 'about' || pageKey === 'settings';
+    const isDropdownItem = ['about', 'settings', 'achievements'].includes(pageKey);
 
     if (isDropdownItem) {
         elements.moreBtn.classList.add('nav__button--active');
@@ -489,6 +519,32 @@ export function buildRecentActivityPage() {
     } else {
         buildWeeklySummaryView();
     }
+}
+
+export function buildAchievementsPage() {
+    const container = elements.achievementsContainer;
+    container.innerHTML = '';
+    const achievementList = document.createElement('div');
+    achievementList.className = 'achievements-list';
+
+    for (const id in ACHIEVEMENTS) {
+        const achievement = ACHIEVEMENTS[id];
+        const isUnlocked = characterData.unlockedAchievements.includes(id);
+
+        const item = document.createElement('div');
+        item.className = `achievement-item ${isUnlocked ? 'unlocked' : 'locked'}`;
+        
+        item.innerHTML = `
+            <div class="achievement-status-icon">${isUnlocked ? '✓' : '?'}</div>
+            <div class="achievement-icon">${achievement.icon}</div>
+            <div class="achievement-details">
+                <div class="achievement-name">${achievement.name}</div>
+                <div class="achievement-description">${achievement.description}</div>
+            </div>
+        `;
+        achievementList.appendChild(item);
+    }
+    container.appendChild(achievementList);
 }
 
 export function updateSkillTotalHoursDisplay(skillId) {
