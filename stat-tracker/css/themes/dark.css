@@ -1,0 +1,16 @@
+:root {
+    --bg-color: #1a1a1a;
+    --container-bg: #1a1a1a;
+    --border-color: #444444;
+    --skill-bg: #2c2c2c;
+    --skill-border: #444444;
+    --text-primary: #f0f0f0;
+    --text-secondary: #a9a9a9;
+    --accent-color: #9370db;
+    --highlight-color: #9370db;
+    --danger-color: #dc3545;
+    --success-color: #28a745;
+    --warning-color: #f0ad4e;
+    --gradient-purple: linear-gradient(135deg, #8a2be2, #4b0082);
+    --texture: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23444444" fill-opacity="0.3" fill-rule="evenodd"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E');
+}

@@ -1,4 +1,20 @@
-/* Navigation */
+/* --- GLOBAL STYLES --- */
+body {
+    background-color: var(--bg-color);
+    background-image: var(--texture);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    font-size: 16px;
+}
+
+
+/* --- NAVIGATION --- */
 .nav__button {
     flex-grow: 1;
     padding: 10px 5px;
@@ -8,7 +24,7 @@
     font-size: 0.9em;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
+    transition: transform 0.1s, box-shadow 0.1s, background-color 0.2s, color 0.2s;
     white-space: nowrap;
 }
 .nav__button--active {
@@ -17,8 +33,11 @@
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     border-radius: 6px;
 }
+.nav__button:hover {
+    background-color: var(--skill-border);
+}
 
-/* More Dropdown */
+/* --- MORE DROPDOWN --- */
 .nav__dropdown {
     position: relative;
     flex-grow: 1;
@@ -46,7 +65,7 @@
     background-color: var(--skill-bg);
 }
 
-/* --- Home Page Card Styles (UPDATED) --- */
+/* --- STAT CARDS --- */
 .total-level-card, .stat {
     padding: 16px;
     border-radius: 12px;
@@ -55,12 +74,10 @@
     gap: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     border: 1px solid var(--border-color);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.1s, box-shadow 0.1s;
     text-align: left;
-    /* This prevents the card from growing beyond its grid column */
     min-width: 0;
 }
-
 .total-level-card {
     background: var(--gradient-purple);
     color: #fff;
@@ -76,26 +93,13 @@
     transform: translateY(-4px);
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
-
 .stat {
     background-color: var(--skill-bg);
 }
-
 .stat:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
-
-body.dark-mode .stat .stat__header,
-body.dark-mode .stat .stat__level-value,
-body.dark-mode .stat .stat__sub-value {
-    color: var(--text-primary);
-}
-body:not(.light-mode) .stat__progress-bar {
-    background-color: #3e3155;
-}
-
-
 .stat__header {
     display: flex;
     align-items: center;
@@ -105,7 +109,6 @@ body:not(.light-mode) .stat__progress-bar {
 }
 .stat__name {
     flex-grow: 1;
-    /* This set of properties ensures single-line truncation */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -123,15 +126,12 @@ body:not(.light-mode) .stat__progress-bar {
     width: 20px;
     height: 20px;
 }
-
-
 .stat__level-container {
     display: flex;
     flex-direction: row;
     align-items: baseline;
     gap: 8px;
 }
-
 .stat__level-value {
     font-size: 2.5em;
     font-weight: 700;
@@ -139,13 +139,11 @@ body:not(.light-mode) .stat__progress-bar {
     line-height: 1;
     cursor: help;
 }
-
 .stat__rank {
     font-size: 1.2em;
     font-weight: 600;
     color: var(--accent-color);
 }
-
 .stat__sub-value {
     font-size: 0.9em;
     font-weight: 600;
@@ -158,7 +156,6 @@ body:not(.light-mode) .stat__progress-bar {
     padding: 0;
     color: #fff;
 }
-
 .stat__progress-bar {
     width: 100%;
     height: 6px;
@@ -175,19 +172,17 @@ body:not(.light-mode) .stat__progress-bar {
     background: var(--gradient-purple);
     transition: width 0.3s ease-in-out;
 }
-
 .total-level-card .stat__progress {
     background: linear-gradient(135deg, #ffd700, #f0ad4e);
 }
 
-/* Stat Page Filters */
+/* --- FILTERS & BUTTONS --- */
 .stat-filters {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
     justify-content: center;
 }
-
 .stat-filter-btn {
     padding: 8px 16px;
     background-color: var(--skill-bg);
@@ -197,50 +192,60 @@ body:not(.light-mode) .stat__progress-bar {
     font-weight: 600;
     cursor: pointer;
     border-radius: 6px;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    transition: transform 0.1s, box-shadow 0.1s, background-color 0.2s;
 }
-
 .stat-filter-btn:hover {
     background-color: var(--skill-border);
 }
-
 .stat-filter-btn--active {
-    background: #000;
+    background: var(--gradient-purple);
     color: #fff;
     border-color: #000;
 }
-
-
-/* Progress Bar & Tooltip */
-.tooltip-trigger {
-    font-size: 0.8em; font-weight: bold; color: var(--text-secondary);
-    border: 1px solid var(--text-secondary); border-radius: 50%;
-    width: 16px; height: 16px; display: inline-flex; justify-content: center;
-    align-items: center; cursor: help; flex-shrink: 0;
-}
-#tooltip {
-    position: absolute; background-color: rgba(10, 10, 10, 0.9); color: white;
-    padding: 8px 12px; border-radius: 4px; font-size: 0.9em; z-index: 1001;
-    pointer-events: none; max-width: 250px; white-space: pre-wrap;
-    border: 1px solid var(--border-color);
-}
-
-/* Forms & Buttons */
-.form-group label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 1em; font-weight: 600; }
-.form-group input, .form-group select, .form-group textarea {
-    width: 100%; padding: 10px; background: var(--bg-color); border: 1px solid var(--border-color);
-    color: var(--text-primary); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 1em; box-sizing: border-box; border-radius: 4px;
-}
-.form-group textarea { resize: vertical; min-height: 80px; }
 .nav-button {
-    width: 100%; padding: 12px; background: var(--gradient-purple); color: #fff;
-    font-weight: 700; border: none; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 1em; cursor: pointer; margin-top: 15px; border-radius: 6px; transition: opacity 0.2s;
+    width: 100%;
+    padding: 12px;
+    background: var(--gradient-purple);
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 15px;
+    border-radius: 6px;
+    transition: transform 0.1s, box-shadow 0.1s, opacity 0.2s;
 }
-.nav-button:hover { opacity: 0.9; }
+.nav-button:hover {
+    opacity: 0.9;
+}
 
-/* Skill Editing */
+
+/* --- FORMS & INPUTS --- */
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 1em;
+    font-weight: 600;
+}
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1em;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* --- SKILL EDITING --- */
 .skill-edit-box {
     background-color: var(--skill-bg);
     padding: 15px;
@@ -253,9 +258,9 @@ body:not(.light-mode) .stat__progress-bar {
 .skill-edit-box:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
-.skill-edit-box--collapsed .skill-edit-box__content { display: none; }
-
-
+.skill-edit-box--collapsed .skill-edit-box__content {
+    display: none;
+}
 .skill-edit-box__header {
     display: flex;
     justify-content: space-between;
@@ -264,7 +269,6 @@ body:not(.light-mode) .stat__progress-bar {
     margin-bottom: 15px;
     border-bottom: 1px solid var(--border-color);
 }
-
 .skill-edit-box__display-name {
     background: transparent;
     border: none;
@@ -283,7 +287,6 @@ body:not(.light-mode) .stat__progress-bar {
     outline: none;
     border-bottom-color: var(--accent-color);
 }
-
 .skill-edit-box__controls {
     display: flex;
     align-items: center;
@@ -304,9 +307,13 @@ body:not(.light-mode) .stat__progress-bar {
 .skill-edit-box__control-btn:hover {
     background-color: var(--skill-border);
 }
-.skill-edit-box__control-btn--reorder { font-family: sans-serif; }
-.skill-edit-box__control-btn--reorder:disabled { opacity: 0.2; cursor: not-allowed; }
-
+.skill-edit-box__control-btn--reorder {
+    font-family: sans-serif;
+}
+.skill-edit-box__control-btn--reorder:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+}
 .skill-edit-box__control-btn--delete {
     background-color: var(--danger-color);
     border-color: var(--danger-color);
@@ -316,37 +323,37 @@ body:not(.light-mode) .stat__progress-bar {
     background-color: var(--danger-color);
     opacity: 0.8;
 }
-
 .skill-edit-box__control-btn--minimize {
-    border-color: var(--warning-color); background-color: var(--warning-color); color: #000;
+    border-color: var(--warning-color);
+    background-color: var(--warning-color);
+    color: #000;
 }
 .skill-edit-box--collapsed .skill-edit-box__control-btn--minimize {
-    border-color: var(--success-color); background-color: var(--success-color);
+    border-color: var(--success-color);
+    background-color: var(--success-color);
 }
-.skill-edit-box__control-btn--minimize:hover { opacity: 0.8; }
-.skill-edit-box__content {
-    /* Styles for the content area if any */
+.skill-edit-box__control-btn--minimize:hover {
+    opacity: 0.8;
 }
-
-
-/* Action Button Colors */
 #add-hours-btn, #add-skill-btn {
     background: var(--gradient-purple);
 }
-
 #save-edits-btn {
     background: #6c757d;
     color: #fff;
 }
-
 .edit-page-actions .nav-button {
     width: auto;
     flex-grow: 1;
 }
+.file-controls button {
+    font-size: 0.9em;
+    flex-grow: 1;
+    background-color: var(--skill-border);
+    margin-top: 0;
+}
 
-.file-controls button { font-size: 0.9em; flex-grow: 1; background-color: var(--skill-border); margin-top: 0;}
-
-/* Toggle Switch Styles */
+/* --- TOGGLE SWITCH --- */
 .switch {
     position: relative;
     display: inline-block;
@@ -390,40 +397,81 @@ input:checked + .slider:before {
     transform: translateX(22px);
 }
 
-/* Chart Container styles */
+/* --- MISC COMPONENTS --- */
 .chart-container {
     padding: 20px;
     background-color: var(--skill-bg);
     border-radius: 8px;
     border: 1px solid var(--border-color);
 }
-
-/* About & Recent Page Content */
-.about-content p, .about-content ul { line-height: 1.6; color: var(--text-secondary); }
-.about-content h3 { color: var(--accent-color); margin-top: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;}
-.about-content ul { padding-left: 20px; }
-.about-content li { margin-bottom: 10px; }
-.recent-activity-list { padding: 0 10px; }
-.activity-date-header {
-    margin-top: 20px; margin-bottom: 10px; color: var(--accent-color);
-    font-size: 1.1em; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;
+.about-content p, .about-content ul {
+    line-height: 1.6;
+    color: var(--text-secondary);
 }
-.activity-day-list { list-style: none; padding-left: 10px; border-left: 2px solid var(--skill-border); }
-.activity-day-list li { padding: 8px 0; color: var(--text-secondary); }
-.activity-day-list li strong { color: var(--text-primary); font-weight: 600; }
-.summary-list { display: flex; flex-direction: column; gap: 15px; }
+.about-content h3 {
+    color: var(--accent-color);
+    margin-top: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+.about-content ul {
+    padding-left: 20px;
+}
+.about-content li {
+    margin-bottom: 10px;
+}
+.recent-activity-list {
+    padding: 0 10px;
+}
+.activity-date-header {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: var(--accent-color);
+    font-size: 1.1em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+.activity-day-list {
+    list-style: none;
+    padding-left: 10px;
+    border-left: 2px solid var(--skill-border);
+}
+.activity-day-list li {
+    padding: 8px 0;
+    color: var(--text-secondary);
+}
+.activity-day-list li strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+.summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
 .summary-item {
-    display: flex; align-items: center; background-color: var(--skill-bg);
-    padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    background-color: var(--skill-bg);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
 }
 .summary-icon {
     font-size: 24px;
     margin-right: 12px;
 }
-.summary-skill-name { flex-grow: 1; font-size: 1.1em; font-weight: 600; color: var(--text-primary); }
-.summary-hours { font-size: 1.2em; font-weight: 700; color: var(--accent-color); }
-
-/* Skill Class Badge Styles */
+.summary-skill-name {
+    flex-grow: 1;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.summary-hours {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--accent-color);
+}
 .skill-class-badge {
     font-size: 0.8em;
     font-weight: 600;
@@ -436,7 +484,6 @@ input:checked + .slider:before {
     margin-top: 4px;
     text-transform: none;
 }
-
 .overall-label-badge {
     font-size: 0.8em;
     font-weight: 600;
@@ -447,17 +494,15 @@ input:checked + .slider:before {
     background: rgba(255, 255, 255, 0.2);
     display: inline-block;
 }
-
-/* Toast Notification */
 #toast-notification {
     position: absolute;
     top: 20px;
     left: 50%;
-    transform: translate(-50%, -100px); /* Start off-screen */
+    transform: translate(-50%, -100px);
     background-color: var(--success-color);
     color: #fff;
     padding: 16px;
-    padding-right: 35px; /* Make space for close button */
+    padding-right: 35px;
     border-radius: 8px;
     z-index: 1002;
     font-weight: 600;
@@ -468,9 +513,8 @@ input:checked + .slider:before {
     display: flex;
     align-items: center;
 }
-
 #toast-notification.show {
-    transform: translate(-50%, 0); /* Move to final position */
+    transform: translate(-50%, 0);
     opacity: 1;
     pointer-events: all;
 }
@@ -491,12 +535,9 @@ input:checked + .slider:before {
 #toast-close-btn:hover {
     opacity: 1;
 }
-
-/* Searchable Dropdown */
 .searchable-dropdown {
     position: relative;
 }
-
 .searchable-dropdown__search-container {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -507,12 +548,10 @@ input:checked + .slider:before {
     border-radius: 4px;
     padding: 0 10px;
 }
-
 .searchable-dropdown__icon-preview {
     font-size: 1.2em;
     pointer-events: none;
 }
-
 .searchable-dropdown__search {
     padding: 10px 0 !important;
     font-size: 1em !important;
@@ -525,7 +564,6 @@ input:checked + .slider:before {
 .searchable-dropdown__search:focus {
     outline: none;
 }
-
 .searchable-dropdown__list-container {
     display: none;
     position: absolute;
@@ -540,17 +578,14 @@ input:checked + .slider:before {
     max-height: 200px;
     overflow-y: auto;
 }
-
 .searchable-dropdown.active .searchable-dropdown__list-container {
     display: block;
 }
-
 .searchable-dropdown__list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
-
 .searchable-dropdown__list li {
     padding: 10px 15px;
     cursor: pointer;
@@ -560,27 +595,21 @@ input:checked + .slider:before {
     gap: 10px;
     background-color: var(--bg-color);
 }
-
 .searchable-dropdown__list li:hover,
 .searchable-dropdown__list li.selected {
     background-color: var(--skill-border);
 }
-
 .searchable-dropdown__emoji {
     font-size: 1.2em;
 }
-
 .searchable-dropdown__name {
     color: var(--text-primary);
 }
-
-/* Detailed Log View */
 .detailed-log-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
-
 .detailed-log-item {
     display: flex;
     justify-content: space-between;
@@ -590,44 +619,36 @@ input:checked + .slider:before {
     border: 1px solid var(--border-color);
     border-radius: 8px;
 }
-
 .log-item__info {
     display: flex;
     align-items: center;
     gap: 12px;
 }
-
 .log-item__icon {
     font-size: 24px;
 }
-
 .log-item__details {
     display: flex;
     flex-direction: column;
 }
-
 .log-item__skill-name {
     font-weight: 600;
     color: var(--text-primary);
 }
-
 .log-item__date {
     font-size: 0.8em;
     color: var(--text-secondary);
 }
-
 .log-item__actions {
     display: flex;
     align-items: center;
     gap: 15px;
 }
-
 .log-item__hours {
     font-weight: 700;
     color: var(--accent-color);
     font-size: 1.1em;
 }
-
 .log-item__delete-btn {
     background-color: var(--danger-color);
     color: #fff;
@@ -640,7 +661,19 @@ input:checked + .slider:before {
     cursor: pointer;
     transition: opacity 0.2s;
 }
-
 .log-item__delete-btn:hover {
     opacity: 0.8;
+}
+#tooltip {
+    position: absolute;
+    background-color: rgba(10, 10, 10, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    z-index: 1001;
+    pointer-events: none;
+    max-width: 250px;
+    white-space: pre-wrap;
+    border: 1px solid var(--border-color);
 }

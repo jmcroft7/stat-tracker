@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skill Tracker</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link id="theme-stylesheet" rel="stylesheet" href="">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js"></script>
 </head>
@@ -127,12 +130,13 @@
                 <label for="char-name-input">Character Name:</label>
                 <input type="text" id="char-name-input">
             </div>
-            <div class="form-group form-group-inline">
-                <label>Dark Mode</label>
-                <label class="switch">
-                    <input type="checkbox" id="theme-toggle">
-                    <span class="slider round"></span>
-                </label>
+            <div class="form-group">
+                <label for="theme-select">Theme</label>
+                <select id="theme-select" class="form-group-select">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="classic">Classic</option>
+                </select>
             </div>
             <hr style="border-color: var(--skill-border);">
             <div class="file-controls">

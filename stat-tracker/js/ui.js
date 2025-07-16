@@ -64,11 +64,15 @@ export function showToast(message, type = 'success') {
 }
 
 export function applyTheme() {
-    document.body.classList.toggle('dark-mode', characterData.theme === 'dark');
-    document.body.classList.toggle('light-mode', characterData.theme === 'light');
-    if (skillChart) {
-        buildChart();
-    }
+    document.getElementById('theme-stylesheet').setAttribute('href', `css/themes/${characterData.theme}.css`);
+    
+    // We need to re-initialize the chart to pick up new theme colors from CSS variables
+    // A brief delay ensures the new stylesheet is loaded and CSS variables are available.
+    setTimeout(() => {
+        if (skillChart) {
+            buildChart();
+        }
+    }, 100); 
 }
 
 export function buildChart() {
@@ -80,11 +84,14 @@ export function buildChart() {
         btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeGraphView);
     });
 
+    // Get colors from CSS variables
+    const style = getComputedStyle(document.body);
+    const gridColor = style.getPropertyValue('--border-color');
+    const labelColor = style.getPropertyValue('--text-primary');
+    const accentColor = style.getPropertyValue('--accent-color');
+
 
     const ctx = elements.skillChartCanvas.getContext('2d');
-    const isLightMode = characterData.theme === 'light';
-    const gridColor = isLightMode ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
-    const labelColor = isLightMode ? '#333' : '#eee';
     
     let labels = [];
     let data = [];
@@ -122,13 +129,13 @@ export function buildChart() {
             datasets: [{
                 label: 'Skill Levels',
                 data: data,
-                backgroundColor: 'rgba(147, 112, 219, 0.4)',
-                borderColor: 'rgba(147, 112, 219, 1)',
+                backgroundColor: `${accentColor}66`, // Add alpha for transparency
+                borderColor: accentColor,
                 borderWidth: 2,
-                pointBackgroundColor: 'rgba(147, 112, 219, 1)',
+                pointBackgroundColor: accentColor,
                 pointBorderColor: '#fff',
                 pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: 'rgba(147, 112, 219, 1)'
+                pointHoverBorderColor: accentColor
             }]
         },
         options: {
@@ -158,7 +165,7 @@ export function buildUI() {
     elements.characterNameHeader.textContent = `${characterData.characterName}'s Stats`;
     elements.charNameInput.value = characterData.characterName;
     elements.hardModeToggle.checked = characterData.totalHoursGoal === 10000;
-    elements.themeToggle.checked = characterData.theme === 'dark';
+    elements.themeSelect.value = characterData.theme;
 
     document.querySelectorAll('#stats-page-filters .stat-filter-btn').forEach(btn => {
         btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeStatView);

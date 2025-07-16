@@ -35,7 +35,7 @@ export function getDefaultData() {
     return {
         characterName: 'Adventurer',
         totalHoursGoal: 1000,
-        theme: 'light',
+        theme: 'light', // 'light', 'dark', or 'classic'
         activeStatView: 'overall',
         activeRecentView: 'weekly',
         activeRecentSubView: 'skill',
@@ -66,6 +66,7 @@ export function loadData() {
         if (!parsedData.skillOrder) parsedData.skillOrder = Object.keys(parsedData.skills);
         if (!parsedData.totalHoursGoal) parsedData.totalHoursGoal = 1000;
         if (!parsedData.theme) parsedData.theme = 'light';
+        if (!['light', 'dark', 'classic'].includes(parsedData.theme)) parsedData.theme = 'light';
         if (!parsedData.activeStatView) parsedData.activeStatView = 'overall';
         if (!parsedData.activeRecentView) parsedData.activeRecentView = 'weekly';
         if (!parsedData.activeRecentSubView) parsedData.activeRecentSubView = 'skill';

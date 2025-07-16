@@ -23,7 +23,7 @@ export const elements = {
     recentViewSelect: document.getElementById('recent-view-select'),
     recentViewToggle: document.getElementById('recent-view-toggle'),
     hardModeToggle: document.getElementById('hard-mode-toggle'),
-    themeToggle: document.getElementById('theme-toggle'),
+    themeSelect: document.getElementById('theme-select'),
     moreBtn: document.getElementById('nav-more'),
     moreDropdown: document.getElementById('more-dropdown'),
     skillChartCanvas: document.getElementById('skill-chart'),

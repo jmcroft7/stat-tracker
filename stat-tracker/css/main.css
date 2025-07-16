@@ -27,6 +27,26 @@ body.dark-mode {
     --texture-line-color: rgba(255, 255, 255, 0.02);
 }
 
+body.classic-mode {
+    --bg-color: #f0f2f5;
+    --container-bg: #f0f2f5;
+    --border-color: #dddddd;
+    --skill-bg: #ffffff;
+    --skill-border: #dddddd;
+    --text-primary: #000000;
+    --text-secondary: #8e8e93;
+    --accent-color: #34c759; /* Green from image */
+    --highlight-color: #ff9500; /* Orange from image */
+    --danger-color: #dc3545;
+    --success-color: #28a745;
+    --warning-color: #f0ad4e;
+    --gradient-purple: #000000; /* Solid black for active elements */
+    --classic-shadow: 3px 3px 0px var(--text-primary);
+    --classic-shadow-pressed: 1px 1px 0px var(--text-primary);
+    --classic-shadow-white: 3px 3px 0px #fff;
+}
+
+
 body {
     background-color: var(--bg-color);
     color: var(--text-primary);

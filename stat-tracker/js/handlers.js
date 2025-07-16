@@ -350,8 +350,8 @@ export function setupEventListeners() {
         state.setHardMode(e.target.checked);
     });
 
-    elements.themeToggle.addEventListener('change', (e) => {
-        const newTheme = e.target.checked ? 'dark' : 'light';
+    elements.themeSelect.addEventListener('change', (e) => {
+        const newTheme = e.target.value;
         state.setTheme(newTheme);
         applyTheme();
     });
