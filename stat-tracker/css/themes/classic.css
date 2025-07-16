@@ -5,7 +5,7 @@
     --skill-bg: #ffffff;
     --skill-border: #dddddd;
     --text-primary: #000000;
-    --text-secondary: #8e8e93;
+    --text-secondary: #938e8e;
     --accent-color: #34c759;
     --highlight-color: #ff9500;
     --danger-color: #dc3545;
@@ -17,31 +17,25 @@
     --classic-shadow-white: 3px 3px 0px #fff;
     --gradient-orange: linear-gradient(135deg, #ff9500, #ff6b2d);
     --texture: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="23" viewBox="0 0 20 23"%3E%3Cg fill="%23e9e9e9" fill-opacity="0.4"%3E%3Cpath d="M10 0l10 5.77v11.55L10 23l-10-5.77V5.77L10 0z"/%3E%3C/g%3E%3C/svg%3E');
+
+    /* Active Button Colors */
+    --active-button-background: var(--text-primary);
+    --active-button-color: var(--skill-bg);
 }
 
 /* --- Classic Theme Overrides --- */
 
-body {
-    background-image: var(--texture);
-}
-
-/* Navigation */
 .nav__button--active {
-    text-shadow: none;
     border-radius: 4px;
     border: 1px solid var(--text-primary);
-    background: var(--text-primary);
-    color: var(--skill-bg);
     box-shadow: var(--classic-shadow-white);
 }
 
-/* Stat Cards */
 .stat, .total-level-card {
     border: 1px solid var(--text-primary);
     border-radius: 8px;
     gap: 12px;
     box-shadow: var(--classic-shadow);
-    transition: transform 0.1s, box-shadow 0.1s;
 }
 .stat:hover, .total-level-card:hover {
     transform: none;
@@ -62,26 +56,22 @@ body {
     background: #fff;
 }
 
-/* Rank & Sub-value */
 .stat__rank {
     color: var(--text-secondary);
     font-weight: 400;
     font-size: 1.1em;
 }
 .stat__sub-value {
-    display: none; /* Hide class badge in classic mode */
+    display: none;
 }
 
-/* Progress Bar */
 .stat__progress {
     background: var(--accent-color);
 }
 
-/* Filter Buttons */
 .stat-filter-btn {
     border-radius: 4px;
     border: 1px solid var(--text-primary);
-    background-color: var(--skill-bg);
     box-shadow: var(--classic-shadow);
 }
 .stat-filter-btn:hover {
@@ -93,9 +83,7 @@ body {
     box-shadow: none;
 }
 .stat-filter-btn--active {
-    background: #000;
     border-color: #000;
-    color: #fff;
     box-shadow: var(--classic-shadow-white);
     transform: none;
 }
@@ -104,12 +92,10 @@ body {
     box-shadow: var(--classic-shadow-white);
 }
 
-/* Tooltip */
 .tooltip-trigger {
     display: none;
 }
 
-/* Nav Buttons */
 .nav-button {
     background: var(--skill-bg);
     color: var(--text-primary);

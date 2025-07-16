@@ -35,10 +35,7 @@
             <div class="header">
                 <h2 id="character-name-header"></h2>
             </div>
-            <div class="stat-filters" id="stats-page-filters">
-                <button class="stat-filter-btn" data-view="overall">Overall</button>
-                <button class="stat-filter-btn" data-view="total">Total</button>
-            </div>
+            <div class="stat-filters" id="stats-page-filters"></div>
             <div id="stat-grid-main" class="stat-grid"></div>
         </div>
 
@@ -46,10 +43,7 @@
             <div class="header">
                 <h2>Skill Graph</h2>
             </div>
-            <div class="stat-filters" id="graph-page-filters">
-                <button class="stat-filter-btn" data-view="skill">Skill</button>
-                <button class="stat-filter-btn" data-view="class">Class</button>
-            </div>
+            <div class="stat-filters" id="graph-page-filters"></div>
             <div class="chart-container">
                 <canvas id="skill-chart"></canvas>
             </div>
@@ -59,10 +53,7 @@
             <div class="header">
                 <h2>Log Progress</h2>
             </div>
-            <div class="stat-filters" id="log-page-filters">
-                <button class="stat-filter-btn stat-filter-btn--active" data-view="add">Add Hours</button>
-                <button class="stat-filter-btn" data-view="view">View Log</button>
-            </div>
+             <div class="stat-filters" id="log-page-filters"></div>
 
             <div id="add-hours-container">
                 <div class="form-group">
@@ -74,7 +65,7 @@
                     <label for="hours-input">Hours to Add:</label>
                     <input type="number" id="hours-input" min="0" placeholder="e.g., 10.5">
                 </div>
-                <button id="add-hours-btn" class="nav-button">Add</button>
+                <div id="add-hours-btn-container"></div>
             </div>
 
             <div id="detailed-log-container" class="hidden">
@@ -85,10 +76,7 @@
             <div class="header">
                 <h2>Recent Activity</h2>
             </div>
-            <div class="stat-filters" id="recent-page-filters">
-                <button class="stat-filter-btn" data-view="weekly">Weekly</button>
-                <button class="stat-filter-btn" data-view="monthly">Monthly</button>
-            </div>
+             <div class="stat-filters" id="recent-page-filters"></div>
              <div id="recent-summary-toggle" class="form-group form-group-inline" style="padding: 10px 0; margin-bottom: 0;">
                 <label>View by Class</label>
                 <label class="switch">
@@ -116,10 +104,7 @@
             </div>
             <hr style="border-color: var(--skill-border);">
             <div id="edit-skills-container"></div>
-            <div class="edit-page-actions">
-                <button id="add-skill-btn" class="nav-button">Add New Skill</button>
-                <button id="save-edits-btn" class="nav-button">Save All Changes</button>
-            </div>
+            <div class="edit-page-actions" id="edit-page-actions-container"></div>
         </div>
 
         <div id="settings-page" class="page hidden">
@@ -139,11 +124,8 @@
                 </select>
             </div>
             <hr style="border-color: var(--skill-border);">
-            <div class="file-controls">
-                <button id="save-to-file-btn" class="nav-button">Save to File</button>
-                <button id="load-from-file-btn" class="nav-button">Load from File</button>
-                <input type="file" id="file-loader-input" class="hidden" accept=".json,text/plain">
-            </div>
+            <div class="file-controls" id="file-controls-container"></div>
+            <input type="file" id="file-loader-input" class="hidden" accept=".json,text/plain">
         </div>
 
         <div id="about-page" class="page hidden">

@@ -17,9 +17,61 @@ import { MAX_LEVEL } from './config.js';
 
 let isSkillsPageDirty = false;
 
+function setupButtonListeners() {
+    document.getElementById('add-hours-btn').addEventListener('click', () => {
+        const skillId = elements.skillSelect.value;
+        const hoursToAdd = parseFloat(elements.hoursInput.value);
+        if (skillId && !isNaN(hoursToAdd) && hoursToAdd > 0) {
+            const skillName = state.characterData.skills[skillId].displayName;
+            state.updateSkillHours(skillId, hoursToAdd);
+            
+            showToast(`${hoursToAdd} hours added to ${skillName}!`);
+            
+            elements.hoursInput.value = '';
+            updateSkillTotalHoursDisplay(skillId);
+        }
+    });
+
+    document.getElementById('add-skill-btn').addEventListener('click', () => {
+        state.addSkill();
+        showToast("New skill added!");
+    });
+
+    document.getElementById('save-edits-btn').addEventListener('click', () => {
+        const edits = [];
+        document.querySelectorAll('.skill-edit-box').forEach(box => {
+            const skillId = box.dataset.skillId;
+            edits.push({
+                id: skillId,
+                displayName: box.querySelector('.skill-edit-box__display-name').value,
+                icon: box.querySelector('.searchable-dropdown__search').dataset.icon,
+                skillClass: box.querySelector('.edit-class').value,
+                notes: box.querySelector('.edit-notes').value
+            });
+        });
+        state.saveAllSkillEdits(edits);
+        isSkillsPageDirty = false;
+        showToast("All changes saved!");
+    });
+
+    document.getElementById('save-to-file-btn').addEventListener('click', () => {
+        const dataStr = JSON.stringify(state.characterData, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${state.characterData.characterName.replace(/\s/g, '_')}_skills.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('load-from-file-btn').addEventListener('click', () => elements.fileLoaderInput.click());
+}
+
 export function setupEventListeners() {
     // --- App-level listeners ---
     window.addEventListener('log-updated', buildLogPage);
+    window.addEventListener('structure-updated', setupButtonListeners);
 
     // --- Navigation ---
     const navLinks = { ...elements.nav, settings: document.getElementById('nav-settings'), about: document.getElementById('nav-about') };
@@ -83,7 +135,7 @@ export function setupEventListeners() {
         }
     });
 
-    document.getElementById('stats-page-filters').addEventListener('click', (e) => {
+    elements.statsPageFilters.addEventListener('click', (e) => {
         const target = e.target.closest('.stat-filter-btn');
         if (target) {
             const view = target.dataset.view;
@@ -91,7 +143,7 @@ export function setupEventListeners() {
         }
     });
 
-    document.getElementById('recent-page-filters').addEventListener('click', (e) => {
+    elements.recentPageFilters.addEventListener('click', (e) => {
         const target = e.target.closest('.stat-filter-btn');
         if (target) {
             const view = target.dataset.view;
@@ -104,7 +156,7 @@ export function setupEventListeners() {
         state.setActiveRecentSubView(newView);
     });
 
-    document.getElementById('graph-page-filters').addEventListener('click', (e) => {
+    elements.graphPageFilters.addEventListener('click', (e) => {
         const target = e.target.closest('.stat-filter-btn');
         if (target) {
             const view = target.dataset.view;
@@ -114,20 +166,8 @@ export function setupEventListeners() {
 
 
     // --- State-Changing Actions ---
-    elements.addHoursBtn.addEventListener('click', () => {
-        const skillId = elements.skillSelect.value;
-        const hoursToAdd = parseFloat(elements.hoursInput.value);
-        if (skillId && !isNaN(hoursToAdd) && hoursToAdd > 0) {
-            const skillName = state.characterData.skills[skillId].displayName;
-            state.updateSkillHours(skillId, hoursToAdd);
-            
-            showToast(`${hoursToAdd} hours added to ${skillName}!`);
-            
-            elements.hoursInput.value = '';
-            updateSkillTotalHoursDisplay(skillId);
-        }
-    });
-
+    setupButtonListeners();
+    
     elements.detailedLogContainer.addEventListener('click', e => {
         const deleteButton = e.target.closest('.log-item__delete-btn');
         if (deleteButton) {
@@ -147,28 +187,6 @@ export function setupEventListeners() {
         if (newName && newName !== state.characterData.characterName) {
             state.updateCharacterName(newName);
         }
-    });
-
-    elements.saveEditsBtn.addEventListener('click', () => {
-        const edits = [];
-        document.querySelectorAll('.skill-edit-box').forEach(box => {
-            const skillId = box.dataset.skillId;
-            edits.push({
-                id: skillId,
-                displayName: box.querySelector('.skill-edit-box__display-name').value,
-                icon: box.querySelector('.searchable-dropdown__search').dataset.icon,
-                skillClass: box.querySelector('.edit-class').value,
-                notes: box.querySelector('.edit-notes').value
-            });
-        });
-        state.saveAllSkillEdits(edits);
-        isSkillsPageDirty = false;
-        showToast("All changes saved!");
-    });
-
-    elements.addSkillBtn.addEventListener('click', () => {
-        state.addSkill();
-        showToast("New skill added!");
     });
 
     elements.editSkillsContainer.addEventListener('input', (e) => {
@@ -315,18 +333,6 @@ export function setupEventListeners() {
     });
 
     // --- File Operations ---
-    elements.saveToFileBtn.addEventListener('click', () => {
-        const dataStr = JSON.stringify(state.characterData, null, 2);
-        const blob = new Blob([dataStr], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${state.characterData.characterName.replace(/\s/g, '_')}_skills.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-    });
-
-    elements.loadFromFileBtn.addEventListener('click', () => elements.fileLoaderInput.click());
     elements.fileLoaderInput.addEventListener('change', e => {
         const file = e.target.files[0];
         if (!file) return;

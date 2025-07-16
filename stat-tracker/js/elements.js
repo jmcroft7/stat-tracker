@@ -7,28 +7,33 @@ export const elements = {
     skillSelect: document.getElementById('skill-select'),
     skillTotalHours: document.getElementById('skill-total-hours'),
     hoursInput: document.getElementById('hours-input'),
-    addHoursBtn: document.getElementById('add-hours-btn'),
     editSkillsContainer: document.getElementById('edit-skills-container'),
     charNameInput: document.getElementById('char-name-input'),
-    saveEditsBtn: document.getElementById('save-edits-btn'),
-    addSkillBtn: document.getElementById('add-skill-btn'),
     tooltip: document.getElementById('tooltip'),
     toastNotification: document.getElementById('toast-notification'),
     toastMessage: document.getElementById('toast-message'),
     toastCloseBtn: document.getElementById('toast-close-btn'),
-    saveToFileBtn: document.getElementById('save-to-file-btn'),
-    loadFromFileBtn: document.getElementById('load-from-file-btn'),
     fileLoaderInput: document.getElementById('file-loader-input'),
     recentActivityContainer: document.getElementById('recent-activity-container'),
-    recentViewSelect: document.getElementById('recent-view-select'),
     recentViewToggle: document.getElementById('recent-view-toggle'),
     hardModeToggle: document.getElementById('hard-mode-toggle'),
     themeSelect: document.getElementById('theme-select'),
     moreBtn: document.getElementById('nav-more'),
     moreDropdown: document.getElementById('more-dropdown'),
     skillChartCanvas: document.getElementById('skill-chart'),
-    // Log Page Elements
+    
+    // Page Filters
+    statsPageFilters: document.getElementById('stats-page-filters'),
+    graphPageFilters: document.getElementById('graph-page-filters'),
     logPageFilters: document.getElementById('log-page-filters'),
+    recentPageFilters: document.getElementById('recent-page-filters'),
+
+    // Button Containers
+    addHoursBtnContainer: document.getElementById('add-hours-btn-container'),
+    editPageActionsContainer: document.getElementById('edit-page-actions-container'),
+    fileControlsContainer: document.getElementById('file-controls-container'),
+
+    // Log Page Elements
     addHoursContainer: document.getElementById('add-hours-container'),
     detailedLogContainer: document.getElementById('detailed-log-container'),
 };

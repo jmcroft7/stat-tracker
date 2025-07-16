@@ -3,6 +3,7 @@ import { elements } from './elements.js';
 import { characterData } from './state.js';
 import { createStatCard } from './components/StatCard.js';
 import { createSkillEditBox } from './components/SkillEditBox.js';
+import { createButton, createFilterButton } from './components/Button.js';
 
 let skillChart = null;
 let toastTimeout;
@@ -44,13 +45,13 @@ function hideToast() {
 
 export function showToast(message, type = 'success') {
     const { toastNotification, toastMessage, toastCloseBtn } = elements;
-    
+
     if (toastTimeout) {
         clearTimeout(toastTimeout);
     }
 
     toastMessage.textContent = message;
-    toastNotification.className = 'show'; 
+    toastNotification.className = 'show';
     if (type === 'danger') {
         toastNotification.classList.add('danger');
     }
@@ -65,26 +66,52 @@ export function showToast(message, type = 'success') {
 
 export function applyTheme() {
     document.getElementById('theme-stylesheet').setAttribute('href', `css/themes/${characterData.theme}.css`);
-    
-    // We need to re-initialize the chart to pick up new theme colors from CSS variables
-    // A brief delay ensures the new stylesheet is loaded and CSS variables are available.
+
     setTimeout(() => {
         if (skillChart) {
             buildChart();
         }
-    }, 100); 
+    }, 100);
 }
+
+function renderFilterButtons(container, filters, activeView) {
+    container.innerHTML = '';
+    filters.forEach(filter => {
+        container.appendChild(createFilterButton({
+            ...filter,
+            isActive: filter.view === activeView
+        }));
+    });
+}
+
+function renderActionButtons() {
+    const addHoursContainer = document.getElementById('add-hours-btn-container');
+    addHoursContainer.innerHTML = '';
+    addHoursContainer.appendChild(createButton({ id: 'add-hours-btn', text: 'Add' }));
+
+    const editActionsContainer = document.getElementById('edit-page-actions-container');
+    editActionsContainer.innerHTML = '';
+    editActionsContainer.appendChild(createButton({ id: 'add-skill-btn', text: 'Add New Skill' }));
+    editActionsContainer.appendChild(createButton({ id: 'save-edits-btn', text: 'Save All Changes' }));
+
+    const fileControlsContainer = document.getElementById('file-controls-container');
+    fileControlsContainer.innerHTML = '';
+    fileControlsContainer.appendChild(createButton({ id: 'save-to-file-btn', text: 'Save to File' }));
+    fileControlsContainer.appendChild(createButton({ id: 'load-from-file-btn', text: 'Load from File' }));
+}
+
 
 export function buildChart() {
     if (skillChart) {
         skillChart.destroy();
     }
     
-    document.querySelectorAll('#graph-page-filters .stat-filter-btn').forEach(btn => {
-        btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeGraphView);
-    });
+    renderFilterButtons(elements.graphPageFilters, [
+        { text: 'Skill', view: 'skill' },
+        { text: 'Class', view: 'class' },
+    ], characterData.activeGraphView);
 
-    // Get colors from CSS variables
+
     const style = getComputedStyle(document.body);
     const gridColor = style.getPropertyValue('--border-color');
     const labelColor = style.getPropertyValue('--text-primary');
@@ -92,7 +119,7 @@ export function buildChart() {
 
 
     const ctx = elements.skillChartCanvas.getContext('2d');
-    
+
     let labels = [];
     let data = [];
     const goal = characterData.totalHoursGoal;
@@ -100,7 +127,7 @@ export function buildChart() {
     if (characterData.activeGraphView === 'class') {
         const classHours = {};
         SKILL_CLASSES.forEach(c => classHours[c] = 0);
-        
+
         for (const skillId in characterData.skills) {
             const skill = characterData.skills[skillId];
             if (skill.class && classHours.hasOwnProperty(skill.class)) {
@@ -111,7 +138,7 @@ export function buildChart() {
         labels = Object.keys(classHours);
         data = Object.values(classHours).map(hours => getLevelFromHours(hours, goal));
 
-    } else { 
+    } else {
         labels = characterData.skillOrder.map(id => characterData.skills[id].displayName);
         data = characterData.skillOrder.map(id => getLevelFromHours(characterData.skills[id].hours, goal));
     }
@@ -129,7 +156,7 @@ export function buildChart() {
             datasets: [{
                 label: 'Skill Levels',
                 data: data,
-                backgroundColor: `${accentColor}66`, // Add alpha for transparency
+                backgroundColor: `${accentColor}66`,
                 borderColor: accentColor,
                 borderWidth: 2,
                 pointBackgroundColor: accentColor,
@@ -167,9 +194,13 @@ export function buildUI() {
     elements.hardModeToggle.checked = characterData.totalHoursGoal === 10000;
     elements.themeSelect.value = characterData.theme;
 
-    document.querySelectorAll('#stats-page-filters .stat-filter-btn').forEach(btn => {
-        btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeStatView);
-    });
+    renderFilterButtons(elements.statsPageFilters, [
+        { text: 'Overall', view: 'overall' },
+        { text: 'Total', view: 'total' },
+    ], characterData.activeStatView);
+
+    renderActionButtons();
+
 
     const mainCardTitle = characterData.activeStatView === 'total' ? 'Total' : 'Overall';
     const mainCardSubText = characterData.activeStatView === 'total' ? 'Total Level' : 'Overall Level';
@@ -199,8 +230,8 @@ export function buildUI() {
             id: skill.id,
             title: skill.displayName,
             icon: skill.icon,
-            level: 0, 
-            rank: 'Beginner', 
+            level: 0,
+            rank: 'Beginner',
             class: skill.class
         });
         elements.statGrid.insertAdjacentHTML('beforeend', statCardHTML);
@@ -265,7 +296,7 @@ export function updateAllStatsDisplay() {
             mainCard.querySelector('.stat__name').textContent = 'Total';
             mainCard.querySelector('.overall-label-badge').textContent = 'Total Level';
 
-        } else { 
+        } else {
             const averageLevel = numberOfSkills > 0 ? totalLevelSum / numberOfSkills : 0;
             const overallLevel = Math.floor(averageLevel);
             const nextOverallLevel = overallLevel + 1;
@@ -348,9 +379,10 @@ function buildDetailedLogView() {
 }
 
 export function buildLogPage() {
-    elements.logPageFilters.querySelectorAll('.stat-filter-btn').forEach(btn => {
-        btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeLogView);
-    });
+    renderFilterButtons(elements.logPageFilters, [
+        { text: 'Add Hours', view: 'add' },
+        { text: 'View Log', view: 'view' },
+    ], characterData.activeLogView);
 
     const view = characterData.activeLogView;
     if (view === 'view') {
@@ -395,7 +427,7 @@ function renderSummary(logs, headerText, timePeriod) {
             summaryList.innerHTML += `<div class="summary-item"><span class="summary-skill-name">${className}</span><span class="summary-hours">${hours.toFixed(1)} hrs</span></div>`;
         });
 
-    } else { 
+    } else {
         const summary = logs.reduce((acc, log) => {
             if (!acc[log.skillId]) { acc[log.skillId] = 0; }
             acc[log.skillId] += log.hours;
@@ -443,16 +475,18 @@ export function buildMonthlySummaryView() {
 }
 
 export function buildRecentActivityPage() {
-    document.querySelectorAll('#recent-page-filters .stat-filter-btn').forEach(btn => {
-        btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeRecentView);
-    });
+    renderFilterButtons(elements.recentPageFilters, [
+        { text: 'Weekly', view: 'weekly' },
+        { text: 'Monthly', view: 'monthly' },
+    ], characterData.activeRecentView);
+
 
     elements.recentViewToggle.checked = characterData.activeRecentSubView === 'class';
 
     const selectedView = characterData.activeRecentView;
     if (selectedView === 'monthly') {
         buildMonthlySummaryView();
-    } else { 
+    } else {
         buildWeeklySummaryView();
     }
 }

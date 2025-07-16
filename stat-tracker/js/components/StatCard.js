@@ -12,12 +12,12 @@ export function createStatCard(cardData) {
     const levelTooltipType = isOverall ? 'hours' : 'hours';
     const iconContent = isOverall ? `<img src="${icon}" class="stat__icon-img" alt="Star Icon">` : `<span class="stat__icon">${icon}</span>`;
 
+    // The '?' span has been removed, and the tooltip trigger is now on the stat__name
     return `
         <div id="${id}" class="${cardTypeClass}" data-skill-id="${id}">
             <div class="stat__header">
                 ${iconContent}
-                <span class="stat__name">${title}</span>
-                ${!isOverall ? '<span class="tooltip-trigger" data-tooltip-type="notes">?</span>' : ''}
+                <span class="stat__name" ${!isOverall ? `data-tooltip-type="notes"` : ''}>${title}</span>
             </div>
             <div class="stat__level-container">
                 <div class="stat__level-value" data-tooltip-type="${levelTooltipType}">${level}</div>
