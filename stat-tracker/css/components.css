@@ -46,7 +46,7 @@
     background-color: var(--skill-bg);
 }
 
-/* --- Home Page Card Styles --- */
+/* --- Home Page Card Styles (UPDATED) --- */
 .total-level-card, .stat {
     padding: 16px;
     border-radius: 12px;
@@ -57,6 +57,8 @@
     border: 1px solid var(--border-color);
     transition: transform 0.2s, box-shadow 0.2s;
     text-align: left;
+    /* This prevents the card from growing beyond its grid column */
+    min-width: 0;
 }
 
 .total-level-card {
@@ -103,6 +105,10 @@ body:not(.light-mode) .stat__progress-bar {
 }
 .stat__name {
     flex-grow: 1;
+    /* This set of properties ensures single-line truncation */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .stat__icon {
     font-size: 20px;
@@ -111,6 +117,7 @@ body:not(.light-mode) .stat__progress-bar {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 .stat__icon-img {
     width: 20px;
@@ -565,4 +572,75 @@ input:checked + .slider:before {
 
 .searchable-dropdown__name {
     color: var(--text-primary);
+}
+
+/* Detailed Log View */
+.detailed-log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.detailed-log-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background-color: var(--skill-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.log-item__info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.log-item__icon {
+    font-size: 24px;
+}
+
+.log-item__details {
+    display: flex;
+    flex-direction: column;
+}
+
+.log-item__skill-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.log-item__date {
+    font-size: 0.8em;
+    color: var(--text-secondary);
+}
+
+.log-item__actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.log-item__hours {
+    font-weight: 700;
+    color: var(--accent-color);
+    font-size: 1.1em;
+}
+
+.log-item__delete-btn {
+    background-color: var(--danger-color);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 1.2em;
+    line-height: 1;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.log-item__delete-btn:hover {
+    opacity: 0.8;
 }

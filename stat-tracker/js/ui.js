@@ -176,25 +176,40 @@ export function buildUI() {
     });
     elements.statGrid.insertAdjacentHTML('beforeend', mainCardHTML);
 
+    const skillsWithLevels = characterData.skillOrder.map(skillId => {
+        const skill = characterData.skills[skillId];
+        return {
+            id: skillId,
+            level: getLevelFromHours(skill.hours, characterData.totalHoursGoal),
+            ...skill
+        };
+    });
+
+    skillsWithLevels.sort((a, b) => b.level - a.level);
+
+    skillsWithLevels.forEach(skill => {
+        const statCardHTML = createStatCard({
+            id: skill.id,
+            title: skill.displayName,
+            icon: skill.icon,
+            level: 0, 
+            rank: 'Beginner', 
+            class: skill.class
+        });
+        elements.statGrid.insertAdjacentHTML('beforeend', statCardHTML);
+    });
+
+
     characterData.skillOrder.forEach((skillId, index) => {
         const skill = characterData.skills[skillId];
         if (!skill) return;
 
-        const statCardHTML = createStatCard({
-            id: skillId,
-            title: skill.displayName,
-            icon: skill.icon,
-            level: 0,
-            rank: 'Beginner',
-            class: skill.class
-        });
-        elements.statGrid.insertAdjacentHTML('beforeend', statCardHTML);
-        
         elements.skillSelect.innerHTML += `<option value="${skillId}">${skill.displayName} ${skill.icon}</option>`;
 
         const skillEditBox = createSkillEditBox(skill, skillId, index, characterData.skillOrder.length);
         elements.editSkillsContainer.appendChild(skillEditBox);
     });
+
     updateAllStatsDisplay();
 }
 
@@ -279,6 +294,66 @@ export function navigateTo(pageKey) {
         elements.moreBtn.classList.add('nav__button--active');
     } else if (elements.nav[pageKey]) {
         elements.nav[pageKey].classList.add('nav__button--active');
+    }
+}
+
+function buildDetailedLogView() {
+    elements.detailedLogContainer.innerHTML = '';
+
+    const logs = characterData.hourLogs;
+
+    if (logs.length === 0) {
+        elements.detailedLogContainer.innerHTML += `<p>No hours have been logged yet.</p>`;
+        return;
+    }
+
+    const logList = document.createElement('div');
+    logList.className = 'detailed-log-list';
+
+    for (let i = logs.length - 1; i >= 0; i--) {
+        const log = logs[i];
+        const skill = characterData.skills[log.skillId];
+        const skillName = skill ? skill.displayName : 'Deleted Skill';
+        const skillIcon = skill ? skill.icon : '❓';
+        const logDate = new Date(log.date);
+        const dateString = logDate.toLocaleDateString();
+        const timeString = logDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        const logItemHTML = `
+            <div class="detailed-log-item">
+                <div class="log-item__info">
+                    <span class="log-item__icon">${skillIcon}</span>
+                    <div class="log-item__details">
+                        <span class="log-item__skill-name">${skillName}</span>
+                        <span class="log-item__date">${dateString} at ${timeString}</span>
+                    </div>
+                </div>
+                <div class="log-item__actions">
+                    <span class="log-item__hours">${log.hours.toFixed(1)} hrs</span>
+                    <button class="log-item__delete-btn" data-log-index="${i}" title="Delete Entry">&times;</button>
+                </div>
+            </div>
+        `;
+        logList.innerHTML += logItemHTML;
+    }
+
+    elements.detailedLogContainer.appendChild(logList);
+}
+
+export function buildLogPage() {
+    elements.logPageFilters.querySelectorAll('.stat-filter-btn').forEach(btn => {
+        btn.classList.toggle('stat-filter-btn--active', btn.dataset.view === characterData.activeLogView);
+    });
+
+    const view = characterData.activeLogView;
+    if (view === 'view') {
+        elements.addHoursContainer.classList.add('hidden');
+        elements.detailedLogContainer.classList.remove('hidden');
+        buildDetailedLogView();
+    } else {
+        elements.addHoursContainer.classList.remove('hidden');
+        elements.detailedLogContainer.classList.add('hidden');
+        updateSkillTotalHoursDisplay(elements.skillSelect.value);
     }
 }
 

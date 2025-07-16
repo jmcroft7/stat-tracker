@@ -9,6 +9,7 @@ import {
     hoursCache1k,
     hoursCache10k,
     buildChart,
+    buildLogPage,
     updateSkillTotalHoursDisplay,
     showToast
 } from './ui.js';
@@ -17,6 +18,9 @@ import { MAX_LEVEL } from './config.js';
 let isSkillsPageDirty = false;
 
 export function setupEventListeners() {
+    // --- App-level listeners ---
+    window.addEventListener('log-updated', buildLogPage);
+
     // --- Navigation ---
     const navLinks = { ...elements.nav, settings: document.getElementById('nav-settings'), about: document.getElementById('nav-about') };
 
@@ -35,13 +39,14 @@ export function setupEventListeners() {
                     }
                 }
                 isSkillsPageDirty = false;
+                
+                navigateTo(key);
 
-                if (key === 'logHours') {
-                    setTimeout(() => updateSkillTotalHoursDisplay(elements.skillSelect.value), 0);
-                }
+                // Build page content after navigating
+                if (key === 'logHours') buildLogPage();
                 if (key === 'recent') buildRecentActivityPage();
                 if (key === 'dashboard') buildChart();
-                navigateTo(key);
+
                 if (key === 'settings' || key === 'about') {
                     elements.moreDropdown.classList.add('hidden');
                 }
@@ -62,7 +67,6 @@ export function setupEventListeners() {
         if (!elements.moreBtn.contains(e.target) && !elements.moreDropdown.contains(e.target)) {
             elements.moreDropdown.classList.add('hidden');
         }
-        // Close any open searchable dropdowns
         document.querySelectorAll('.searchable-dropdown.active').forEach(dropdown => {
             if (!dropdown.contains(e.target)) {
                 dropdown.classList.remove('active');
@@ -71,6 +75,14 @@ export function setupEventListeners() {
     });
 
     // --- Page-Specific Filters ---
+    elements.logPageFilters.addEventListener('click', (e) => {
+        const target = e.target.closest('.stat-filter-btn');
+        if (target) {
+            const view = target.dataset.view;
+            state.setActiveLogView(view);
+        }
+    });
+
     document.getElementById('stats-page-filters').addEventListener('click', (e) => {
         const target = e.target.closest('.stat-filter-btn');
         if (target) {
@@ -116,6 +128,20 @@ export function setupEventListeners() {
         }
     });
 
+    elements.detailedLogContainer.addEventListener('click', e => {
+        const deleteButton = e.target.closest('.log-item__delete-btn');
+        if (deleteButton) {
+            const logIndex = parseInt(deleteButton.dataset.logIndex, 10);
+            const log = state.characterData.hourLogs[logIndex];
+            const skillName = state.characterData.skills[log.skillId]?.displayName || 'this entry';
+
+            if (confirm(`Are you sure you want to delete the log of ${log.hours} hours for "${skillName}"?`)) {
+                state.deleteHourLog(logIndex);
+                showToast('Log entry deleted.', 'danger');
+            }
+        }
+    });
+
     elements.charNameInput.addEventListener('blur', () => {
         const newName = elements.charNameInput.value.trim();
         if (newName && newName !== state.characterData.characterName) {
@@ -152,7 +178,6 @@ export function setupEventListeners() {
     });
 
     elements.editSkillsContainer.addEventListener('click', e => {
-        // Searchable Dropdown Logic
         const dropdownSearch = e.target.closest('.searchable-dropdown__search');
         if (dropdownSearch) {
             const parentDropdown = dropdownSearch.closest('.searchable-dropdown');
@@ -182,7 +207,6 @@ export function setupEventListeners() {
         }
 
 
-        // Other controls
         const button = e.target.closest('.skill-edit-box__control-btn');
         if (!button) return;
         isSkillsPageDirty = true;
@@ -205,7 +229,6 @@ export function setupEventListeners() {
         }
     });
     
-    // Searchable dropdown filtering
     elements.editSkillsContainer.addEventListener('keyup', e => {
         const searchInput = e.target.closest('.searchable-dropdown__search');
         if (searchInput) {
@@ -233,7 +256,7 @@ export function setupEventListeners() {
         const searchInput = e.target.closest('.searchable-dropdown__search');
         if(searchInput) {
             const iconPreview = searchInput.parentElement.querySelector('.searchable-dropdown__icon-preview');
-            iconPreview.style.display = 'block'; // Show icon again
+            iconPreview.style.display = 'block';
         }
     });
 

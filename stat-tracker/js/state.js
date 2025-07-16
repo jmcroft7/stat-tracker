@@ -18,6 +18,10 @@ function dispatchRecentViewChange() {
     window.dispatchEvent(new CustomEvent('recent-view-changed'));
 }
 
+function dispatchLogUpdate() {
+    window.dispatchEvent(new CustomEvent('log-updated'));
+}
+
 function dispatchGraphViewChange() {
     window.dispatchEvent(new CustomEvent('graph-view-changed'));
 }
@@ -32,10 +36,11 @@ export function getDefaultData() {
         characterName: 'Adventurer',
         totalHoursGoal: 1000,
         theme: 'light',
-        activeStatView: 'overall', // 'overall', 'total', or 'recent'
-        activeRecentView: 'weekly', // 'weekly', or 'monthly'
-        activeRecentSubView: 'skill', // 'skill' or 'class'
-        activeGraphView: 'skill', // 'skill', 'class', or 'recent'
+        activeStatView: 'overall',
+        activeRecentView: 'weekly',
+        activeRecentSubView: 'skill',
+        activeGraphView: 'skill',
+        activeLogView: 'add', // 'add' or 'view'
         skillOrder: ['skill1', 'skill2', 'skill3'],
         skills: defaultSkills,
         hourLogs: []
@@ -53,7 +58,7 @@ export function loadData() {
         if (parsedData.skills) {
             for (const skillId in parsedData.skills) {
                 if (parsedData.skills[skillId].icon && parsedData.skills[skillId].icon.includes('https://')) {
-                    parsedData.skills[skillId].icon = '💡';
+                    parsedData.skills[skillId].icon = '💻';
                 }
             }
         }
@@ -65,6 +70,7 @@ export function loadData() {
         if (!parsedData.activeRecentView) parsedData.activeRecentView = 'weekly';
         if (!parsedData.activeRecentSubView) parsedData.activeRecentSubView = 'skill';
         if (!parsedData.activeGraphView) parsedData.activeGraphView = 'skill';
+        if (!parsedData.activeLogView) parsedData.activeLogView = 'add';
         if (!parsedData.hourLogs) parsedData.hourLogs = [];
         for (const skillId in parsedData.skills) {
             if (parsedData.skills[skillId].notes === undefined) {
@@ -98,6 +104,14 @@ export function setActiveRecentView(view) {
     }
 }
 
+export function setActiveLogView(view) {
+    if (['add', 'view'].includes(view)) {
+        characterData.activeLogView = view;
+        saveData();
+        dispatchLogUpdate();
+    }
+}
+
 export function setActiveRecentSubView(view) {
     if (['skill', 'class'].includes(view)) {
         characterData.activeRecentSubView = view;
@@ -117,7 +131,7 @@ export function setActiveGraphView(view) {
 export function updateCharacterName(newName) {
     characterData.characterName = newName || 'Adventurer';
     saveData();
-    dispatchStructureUpdate(); // Rebuild UI to show new name in header
+    dispatchStructureUpdate();
 }
 
 export function updateSkillHours(skillId, hoursToAdd) {
@@ -143,6 +157,23 @@ export function deleteSkill(skillId) {
         characterData.skillOrder = characterData.skillOrder.filter(id => id !== skillId);
         saveData();
         dispatchStructureUpdate();
+    }
+}
+
+export function deleteHourLog(logIndex) {
+    if (logIndex >= 0 && logIndex < characterData.hourLogs.length) {
+        const logToDelete = characterData.hourLogs[logIndex];
+        const skillId = logToDelete.skillId;
+        const hoursToDelete = logToDelete.hours;
+
+        if (characterData.skills[skillId]) {
+            characterData.skills[skillId].hours -= hoursToDelete;
+        }
+
+        characterData.hourLogs.splice(logIndex, 1);
+        saveData();
+        dispatchHoursUpdate();
+        dispatchLogUpdate(); // Rebuild the log page
     }
 }
 

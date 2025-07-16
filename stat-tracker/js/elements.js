@@ -27,4 +27,8 @@ export const elements = {
     moreBtn: document.getElementById('nav-more'),
     moreDropdown: document.getElementById('more-dropdown'),
     skillChartCanvas: document.getElementById('skill-chart'),
+    // Log Page Elements
+    logPageFilters: document.getElementById('log-page-filters'),
+    addHoursContainer: document.getElementById('add-hours-container'),
+    detailedLogContainer: document.getElementById('detailed-log-container'),
 };
